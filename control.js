@@ -1,27 +1,25 @@
+import Subject from '/modules/subject.js';
+import Target from '/modules/target.js';
+
 export default class Control {
 
     canvas;
-    subject;
+    subject = new Subject(4,1.001, 1,1);
 
-    target = {
-        position : {
-            x : 0,
-            y : 0
-        },
-        size : {
-            x : 10,
-            y : 1
-        }
-    };
+    targets = {
+        'wall' : new Target(0,0, 10,1),
+        'barrier' : new Target(9,4, 1,4)
+    }
 
     isSimulationRunning = false;
     oneSecond = 1000;
     tickInterval = 60;
-    gravity = 0.001;
+    gravity = 0.0025;
 
-    constructor(subject, canvas) {
+    constructor(canvas) {
         this.canvas = canvas;
-        this.subject = subject;
+
+        this.targets['barrier'].setForce(0.0250);
 
         window.addEventListener('keyup', (event) => {
             console.log(event);
@@ -42,9 +40,11 @@ export default class Control {
 
     mainLoop() {
         this.interval = setInterval(() => {
+            this.calcCollision();
             this.calcMovement(this.subject);
             this.canvas.clearCanvas();
             this.canvas.draw(this.subject);
+            this.canvas.draw(this.targets['barrier']);
             this.canvas.print(this.subject.position.y.toFixed(6));
             
             (!this.isSimulationRunning) && clearInterval(this.interval);
@@ -53,18 +53,25 @@ export default class Control {
     }
 
     calcMovement(subject) {
-        if (this.hasCollide(this.subject, this.target)) {
+        subject.position.y += Number(subject.movement.force.toFixed(6));
+        this.targets['barrier'].calcMovement();
+    }
+
+    calcCollision() {
+        if (this.hasCollide(this.subject, this.targets['wall'])) {
             this.subject.setForce(
                 Number((this.subject.size.y - this.subject.position.y + this.gravity).toFixed(6))
             );
+        } else if (this.hasCollide(this.subject, this.targets['barrier'])) {
+            this.isSimulationRunning = true;
         } else {
-            subject.addForce( - this.gravity);
+            this.subject.addForce( - this.gravity);
         }
-        subject.position.y += Number(subject.movement.force.toFixed(6));
     }
 
     hasCollide(subject, target) {
-        return (subject.posDownY+this.subject.movement.force) < target.position.y ||
-                subject.posDownY < target.position.y
+        return subject.posDownSide+this.subject.movement.force < target.position.y &&
+               subject.posDownSide < target.position.y &&
+               subject.posRightSide > target.position.x
     }
 }
