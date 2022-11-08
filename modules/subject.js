@@ -31,22 +31,26 @@ export default class Subject {
     }
 
     setForce(forcePoint) {
-        this.movement.force = forcePoint;
+        this.movement.force = Number(forcePoint.toFixed(6));
     }
 
     addForce(forcePoints) {
-        this.movement.force += forcePoints;
+        this.movement.force = Number((this.movement.force+forcePoints).toFixed(6));
     }
 
-    get posDownSide() {
+    get posDownY() {
         return Number(this.position.y.toFixed(6))-this.size.y;
     }
 
-    get posRightSide() {
+    get posY() {
+        return Number(this.position.y.toFixed(6));
+    }
+
+    get posRightX() {
         return Number(this.position.x.toFixed(6))+this.size.x;
     }
 
-    get posLeftSide () {
+    get posX() {
         return Number(this.position.x.toFixed(6));
     }
 }

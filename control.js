@@ -7,24 +7,41 @@ export default class Control {
     subject = new Subject(4,1.001, 1,1);
 
     targets = {
-        'wall' : new Target(0,0, 10,1),
-        'barrier' : new Target(9,4, 1,4)
+        'wall' : [new Target(0,0, 10,1)],
+        'barriers' : new Array()
     }
 
     isSimulationRunning = false;
     oneSecond = 1000;
     tickInterval = 60;
-    gravity = 0.0025;
+    gravity = -9.81/this.tickInterval;
+    flapforce = 0.0825;
+    airResistance = 0.0025;
+    barrierSpeed = 0.0250;
+    barrierQuantity = 7;
 
     constructor(canvas) {
         this.canvas = canvas;
 
-        this.targets['barrier'].setForce(0.0250);
+        let BarrierDistance = 10;
+        let barrierStep = 6;
+        for(let x=0; x<this.barrierQuantity/2; x++) {
+            let size1 = Math.ceil(Math.random()*3);
+            let size2 = Math.ceil(Math.random()*4);
+
+            let barrierUp = new Target( BarrierDistance+(barrierStep*x), size1,  1, size1);
+            barrierUp.setForce(this.barrierSpeed);
+            this.targets['barriers'].push(barrierUp);
+
+            let barrierDown = new Target( BarrierDistance+(barrierStep*x), 10,  1, size2);
+            barrierDown.setForce(this.barrierSpeed);
+            this.targets['barriers'].push(barrierDown);
+        }
 
         window.addEventListener('keyup', (event) => {
             console.log(event);
             this.subject.setForce(0);
-            this.subject.addForce(0.0825);
+            this.subject.addForce(this.flapforce);
 
         });
 
@@ -44,7 +61,10 @@ export default class Control {
             this.calcMovement(this.subject);
             this.canvas.clearCanvas();
             this.canvas.draw(this.subject);
-            this.canvas.draw(this.targets['barrier']);
+            this.targets['barriers'].forEach( (element) => {
+                this.canvas.draw(element);
+            });
+            
             this.canvas.print(this.subject.position.y.toFixed(6));
             
             (!this.isSimulationRunning) && clearInterval(this.interval);
@@ -54,24 +74,32 @@ export default class Control {
 
     calcMovement(subject) {
         subject.position.y += Number(subject.movement.force.toFixed(6));
-        this.targets['barrier'].calcMovement();
+        this.targets['barriers'].forEach( (element) => {
+            element.calcMovement();
+        });
     }
 
     calcCollision() {
         if (this.hasCollide(this.subject, this.targets['wall'])) {
-            this.subject.setForce(
-                Number((this.subject.size.y - this.subject.position.y + this.gravity).toFixed(6))
-            );
-        } else if (this.hasCollide(this.subject, this.targets['barrier'])) {
+            this.subject.position.y = 1;
+        } else if (this.hasCollide(this.subject, this.targets['barriers'])) {
             this.isSimulationRunning = true;
+            this.subject.position.y = 1;
         } else {
-            this.subject.addForce( - this.gravity);
+            if (this.subject.movement.force > this.gravity) {
+                this.subject.addForce( - this.airResistance);
+            }
         }
     }
 
-    hasCollide(subject, target) {
-        return subject.posDownSide+this.subject.movement.force < target.position.y &&
-               subject.posDownSide < target.position.y &&
-               subject.posRightSide > target.position.x
+    hasCollide(subject, targets) {
+        for (let x=0; x<targets.length; x++) {
+            if ((subject.posRightX >= targets[x].position.x && subject.posRightX <= targets[x].posRightX) &&
+                (subject.posDownY <= targets[x].posY && subject.posDownY >= targets[x].posDownY)
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 }
