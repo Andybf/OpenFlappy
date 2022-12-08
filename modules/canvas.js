@@ -57,7 +57,7 @@ export default class Canvas extends HTMLElement {
             this.context.fillStyle = '#343434';
             this.context.font = '16px Arial';
             this.context.fillText(
-                message.toFixed(3),
+                message.toString(),
                 0,
                 16+ index*16
             );

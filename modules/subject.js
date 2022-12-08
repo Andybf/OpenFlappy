@@ -7,8 +7,8 @@ export default class Subject {
 
     sprites = {
         activeIndex : 0,
-        width : 32,
-        height : 32,
+        width : 0,
+        height : 0,
         texture : new Image() 
     }
 

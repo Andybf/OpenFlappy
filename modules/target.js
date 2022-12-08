@@ -9,7 +9,9 @@ export default class Target extends Subject {
 
     constructor(posX, posY, sizX, sizY) {
         super(posX, posY, sizX, sizY);
-        this.sprites.texture.src = '../media/image/null.png';
+        this.sprites.texture.src = '../media/image/pipe.png';
+        this.sprites.width = 32;
+        this.sprites.height = 64;
     }
 
     calcMovement() {
