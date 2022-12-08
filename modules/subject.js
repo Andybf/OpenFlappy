@@ -5,6 +5,13 @@ export default class Subject {
     directionLeft = 'left';
     directionRight = 'right';
 
+    sprites = {
+        activeIndex : 0,
+        width : 32,
+        height : 32,
+        texture : new Image() 
+    }
+
     movement = {
         force : 0.125,
         momentum : 0,
@@ -22,6 +29,7 @@ export default class Subject {
     }
 
     color = "#343434";
+    rotation = 0.0;
 
     constructor(posX, posY, sizX, sizY) {
         this.position.x = posX;

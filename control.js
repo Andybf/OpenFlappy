@@ -1,10 +1,10 @@
-import Subject from '/modules/subject.js';
 import Target from '/modules/target.js';
+import Player from '/modules/player.js';
 
 export default class Control {
 
     canvas;
-    subject = new Subject(4,1.001, 1,1);
+    subject = new Player(4,1.001, 1,1);
 
     targets = {
         'wall' : [new Target(0,0, 10,1)],
@@ -18,31 +18,29 @@ export default class Control {
     flapforce = 0.0825;
     airResistance = 0.0025;
     barrierSpeed = 0.0250;
-    barrierQuantity = 7;
+    barrierQuantity = 4;
 
     constructor(canvas) {
         this.canvas = canvas;
 
         let BarrierDistance = 10;
-        let barrierStep = 6;
+        let barrierStep = 5;
         for(let x=0; x<this.barrierQuantity/2; x++) {
-            let size1 = Math.ceil(Math.random()*3);
-            let size2 = Math.ceil(Math.random()*4);
 
-            let barrierUp = new Target( BarrierDistance+(barrierStep*x), size1,  1, size1);
+            let barrierUp = new Target( BarrierDistance+(barrierStep*x), 0,  1, 0);
+            barrierUp.generateSize();
             barrierUp.setForce(this.barrierSpeed);
             this.targets['barriers'].push(barrierUp);
 
-            let barrierDown = new Target( BarrierDistance+(barrierStep*x), 10,  1, size2);
+            let barrierDown = new Target( BarrierDistance+(barrierStep*x), 10,  1, 0);
+            barrierDown.generateSize();
             barrierDown.setForce(this.barrierSpeed);
             this.targets['barriers'].push(barrierDown);
         }
 
         window.addEventListener('keyup', (event) => {
-            console.log(event);
             this.subject.setForce(0);
             this.subject.addForce(this.flapforce);
-
         });
 
         window.addEventListener('click', (event) => {
@@ -58,24 +56,22 @@ export default class Control {
     mainLoop() {
         this.interval = setInterval(() => {
             this.calcCollision();
-            this.calcMovement(this.subject);
+            this.calcMovements();
             this.canvas.clearCanvas();
             this.canvas.draw(this.subject);
             this.targets['barriers'].forEach( (element) => {
                 this.canvas.draw(element);
             });
             
-            this.canvas.print(this.subject.position.y.toFixed(6));
-            
             (!this.isSimulationRunning) && clearInterval(this.interval);
         },
         this.oneSecond / this.tickInterval);
     }
 
-    calcMovement(subject) {
-        subject.position.y += Number(subject.movement.force.toFixed(6));
-        this.targets['barriers'].forEach( (element) => {
-            element.calcMovement();
+    calcMovements() {
+        this.subject.calcPlayerAnimation();
+        this.targets['barriers'].forEach( (barrier) => {
+            barrier.calcMovement();
         });
     }
 
@@ -94,8 +90,10 @@ export default class Control {
 
     hasCollide(subject, targets) {
         for (let x=0; x<targets.length; x++) {
-            if ((subject.posRightX >= targets[x].position.x && subject.posRightX <= targets[x].posRightX) &&
-                (subject.posDownY <= targets[x].posY && subject.posDownY >= targets[x].posDownY)
+            if (subject.posRightX >= targets[x].position.x &&
+                subject.posRightX <= targets[x].posRightX &&
+                subject.posDownY <= targets[x].posY &&
+                subject.posDownY >= targets[x].posDownY
             ) {
                 return true;
             }

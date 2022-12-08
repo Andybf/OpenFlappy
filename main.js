@@ -1,5 +1,5 @@
 
-import('./canvas.js').then( ( appClassDefinition) => {
+import('./modules/canvas.js').then( ( appClassDefinition) => {
     customElements.define("cmp-canvas", appClassDefinition.default);
 
     import("./control.js").then( (Control) => {
