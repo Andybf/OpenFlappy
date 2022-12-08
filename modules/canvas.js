@@ -51,18 +51,16 @@ export default class Canvas extends HTMLElement {
         this.context.closePath();
     }
 
-    print(...messages) {
-        messages.forEach( (message, index) => {
-            this.context.beginPath();
-            this.context.fillStyle = '#343434';
-            this.context.font = '16px Arial';
-            this.context.fillText(
-                message.toString(),
-                0,
-                16+ index*16
-            );
-            this.context.closePath();
-        });
+    print(message, line) {
+        this.context.beginPath();
+        this.context.fillStyle = '#343434';
+        this.context.font = '16px Arial';
+        this.context.fillText(
+            message.toString(),
+            0,
+            line*16 +16
+        );
+        this.context.closePath();
     }
 
     pointsToPixels(point) {

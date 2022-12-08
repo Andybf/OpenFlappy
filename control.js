@@ -18,7 +18,6 @@ export default class Control {
     gravity = -9.81/this.tickInterval;
     flapforce = 0.0825;
     airResistance = 0.0025;
-    barrierSpeed = 0.0250;
     barrierQuantity = 4;
 
     constructor(canvas) {
@@ -31,12 +30,10 @@ export default class Control {
             let barrierUp = new Target( BarrierDistance+(barrierStep*x), 0,  1.5, 0);
             barrierUp.generateSize();
             barrierUp.rotation = 180;
-            barrierUp.setForce(this.barrierSpeed);
             this.targets['barriers'].push(barrierUp);
 
             let barrierDown = new Target( BarrierDistance+(barrierStep*x), 10,  1.5, 0);
             barrierDown.generateSize();
-            barrierDown.setForce(this.barrierSpeed);
             this.targets['barriers'].push(barrierDown);
         }
 
@@ -61,23 +58,23 @@ export default class Control {
             this.calcMovements();
             this.calcPoints();
 
+            if (!this.isSimulationRunning) {clearInterval(this.interval); return;};
+
             this.canvas.clearCanvas();
-            //this.canvas.print(this.points)
             this.canvas.draw(this.subject);
             this.targets['barriers'].forEach( (element) => {
                 this.canvas.draw(element);
             });
-            (!this.isSimulationRunning) && clearInterval(this.interval);
+            this.canvas.print('Points: '+this.points, 0);
         },
         this.oneSecond / this.tickInterval);
     }
 
     calcPoints() {
-        for (let c=0; c<this.targets['barriers'].length; c+=2) {
-            if (Number(this.subject.position.x.toFixed(2)) ==
-                Number(this.targets['barriers'][c].position.x.toFixed(2)))
-            {
-                this.points++;
+        for (let c=0; c<this.targets['barriers'].length; c++) {
+            if (Math.floor(this.subject.position.x) == Math.ceil(this.targets['barriers'][c].position.x)) {
+                this.points += this.targets['barriers'][c].pointsToCollect;
+                this.targets['barriers'][c].pointsToCollect = 0;
             }
         }
     }
@@ -93,8 +90,8 @@ export default class Control {
         if (this.hasCollide(this.subject, this.targets['wall'])) {
             this.subject.position.y = 1;
         } else if (this.hasCollide(this.subject, this.targets['barriers'])) {
-            this.isSimulationRunning = true;
-            this.subject.position.y = 1;
+            this.canvas.print('Game Over!', 1);
+            this.isSimulationRunning = false;
         } else {
             if (this.subject.movement.force > this.gravity) {
                 this.subject.addForce( - this.airResistance);

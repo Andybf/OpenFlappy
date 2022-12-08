@@ -3,15 +3,17 @@ import Subject from "./subject.js";
 export default class Target extends Subject {
 
     originalPosition;
-    barrierSpeed = 0.0250;
+    barrierSpeed = 0.0500;
     minSize = 2.0;
-    maxSize = 2.5;
+    maxSize = 2.75;
+    pointsToCollect = 0.5;
 
     constructor(posX, posY, sizX, sizY) {
         super(posX, posY, sizX, sizY);
         this.sprites.texture.src = '../media/image/pipe.png';
         this.sprites.width = 32;
         this.sprites.height = 64;
+        this.setForce(this.barrierSpeed);
     }
 
     calcMovement() {
@@ -24,6 +26,7 @@ export default class Target extends Subject {
 
     resetPosition() {
         this.position.x = 10;
+        this.pointsToCollect = 0.5;
     }
 
     generateSize() {
