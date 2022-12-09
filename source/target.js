@@ -3,10 +3,10 @@ import Subject from "./subject.js";
 export default class Target extends Subject {
 
     originalPosition;
-    barrierSpeed = 0.0500;
     minSize = 2.0;
     maxSize = 2.75;
     pointsToCollect = 1;
+    barrierSpeed = 0.0500;
 
     constructor(posX, posY, sizX, sizY) {
         super(posX, posY, sizX, sizY);

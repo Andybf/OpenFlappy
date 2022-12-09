@@ -11,29 +11,35 @@ export default class Control {
         'barriers' : new Array()
     }
     audioSystem;
+    isGameOver = false;
     isSimulationRunning = false;
-    oneSecond = 1000;
-    tickInterval = 60;
     points = 0;
-    gravity = -9.81/this.tickInterval;
     airResistance = 0.0025;
     barrierQuantity = 4;
+
+    oneSecond = 1000;
+    tickInterval = 60;
+    timePassed;
+    gravity = -9.81/this.tickInterval;
 
     constructor(canvas) {
         this.canvas = canvas;
         this.audioSystem = new Audio();
         this.audioSystem.loop = false;
         this.audioSystem.volume = 0.5;
+        this.timePassed = Date.now();
 
         window.addEventListener('keyup', (event) => {
-            if(event.key == 'r') {
+            if(event.key == 'r' && this.isGameOver == true) {
                 this.resetGame();
             }
         });
 
         window.addEventListener('click', (event) => {
-            this.player.setForce(0);
-            this.player.flapWings()
+            if (this.isGameOver == false) {
+                this.player.setForce(0);
+                this.player.flapWings()
+            }
         });
 
         this.initialize();
@@ -71,21 +77,45 @@ export default class Control {
         this.interval = setInterval(() => {
             this.calcCollision();
             this.calcMovements();
-            this.calcPoints();
+            this.calcGamePoints();
 
             if (!this.isSimulationRunning) {clearInterval(this.interval); return;};
 
             this.canvas.clearCanvas();
-            this.canvas.draw(this.player);
             this.targets['barriers'].forEach( (element) => {
                 this.canvas.draw(element);
             });
+            this.canvas.draw(this.player);
             this.canvas.print('Points: '+this.points, 0);
+
         },
         this.oneSecond / this.tickInterval);
     }
 
-    calcPoints() {
+    calcCollision() {
+        if ((this.hasCollide(this.player, this.targets['wall']) || this.hasCollide(this.player, this.targets['barriers'])) &&
+            this.isGameOver == false)
+        {
+            this.playerHit();
+        }
+        else if (this.hasCollide(this.player, this.targets['wall']) && this.isGameOver) {
+            this.gameOver();
+        }
+        else {
+            if (this.player.movement.force > this.gravity) {
+                this.player.addForce( - this.airResistance);
+            }
+        }
+    }
+
+    calcMovements() {
+        this.player.calcPlayerAnimation();
+        this.targets['barriers'].forEach( (barrier) => {
+            barrier.calcMovement();
+        });
+    }
+
+    calcGamePoints() {
         for (let c=0; c<this.targets['barriers'].length; c+=2) {
             if (Math.floor(this.player.position.x) == Math.ceil(this.targets['barriers'][c].position.x) &&
                 this.targets['barriers'][c].pointsToCollect > 0
@@ -99,26 +129,27 @@ export default class Control {
         }
     }
 
-    calcMovements() {
-        this.player.calcPlayerAnimation();
-        this.targets['barriers'].forEach( (barrier) => {
-            barrier.calcMovement();
-        });
+    playerHit() {
+        this.targets['barriers'].forEach( barrier => { barrier.setForce(0); });
+        this.player.rotationFactor = 300;
+        this.audioSystem.src = '/content/sound/hit.mp3';
+        this.audioSystem.play();
+        this.isGameOver = true;
     }
 
-    calcCollision() {
-        if (this.hasCollide(this.player, this.targets['wall']) || this.hasCollide(this.player, this.targets['barriers'])) {
-            this.canvas.print('Game Over!', 1);
-            this.canvas.print('Press R to reset', 2);
-            this.isSimulationRunning = false;
+    gameOver() {
+        this.isSimulationRunning = false;
+        this.canvas.print('Game Over!', 1);
+        this.canvas.print('Press R to reset', 2);
+    }
 
-            this.audioSystem.src = '/content/sound/hit.mp3';
-            this.audioSystem.play();
-        } else {
-            if (this.player.movement.force > this.gravity) {
-                this.player.addForce( - this.airResistance);
-            }
-        }
+    resetGame() {
+        this.points = 0;
+        this.player = null;
+        this.isGameOver = false;
+        this.targets['wall'].pop()
+        this.targets['barriers'].length = 0;
+        this.initialize();
     }
 
     hasCollide(subject, targets) {
@@ -140,13 +171,5 @@ export default class Control {
             }
         };
         return false;
-    }
-
-    resetGame() {
-        this.points = 0;
-        this.player = null;
-        this.targets['wall'].pop()
-        this.targets['barriers'].length = 0;
-        this.initialize();
     }
 }

@@ -3,6 +3,7 @@ import Subject from "./subject.js";
 export default class Player extends Subject {
 
     flapForce = 0.0825;
+    rotationFactor = 100;
 
     constructor(posX, posY, sizX, sizY) {
         super(posX, posY, sizX, sizY);
@@ -18,8 +19,7 @@ export default class Player extends Subject {
     }
 
     calcRotation() {
-        const rotationFactor = 100;
-        this.rotation = this.movement.force * rotationFactor;
+        this.rotation = this.movement.force * this.rotationFactor;
     }
 
     calcPosition() {

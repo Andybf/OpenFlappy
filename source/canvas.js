@@ -54,7 +54,7 @@ export default class Canvas extends HTMLElement {
     }
 
     print(message, line) {
-        let padding = 6;
+        let padding = 10;
         this.context.beginPath();
         this.context.fillStyle = '#343434';
         this.context.font = '16px Arial';
