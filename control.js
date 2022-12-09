@@ -4,10 +4,10 @@ import Player from '/modules/player.js';
 export default class Control {
 
     canvas;
-    subject = new Player(4,1.001, 1,1);
+    player;
 
     targets = {
-        'wall' : [new Target(0,0, 10,1)],
+        'wall' : new Array(),
         'barriers' : new Array()
     }
 
@@ -23,10 +23,29 @@ export default class Control {
     constructor(canvas) {
         this.canvas = canvas;
 
+        window.addEventListener('keyup', (event) => {
+            if(event.key == 'r') {
+                this.resetGame();
+            }
+        });
+
+        window.addEventListener('click', (event) => {
+            this.player.setForce(0);
+            this.player.addForce(this.flapforce);
+        });
+
+        this.initialize();
+    }
+
+    initialize() {
+        this.player = new Player(4,1.001, 1,1);
+
         let BarrierDistance = 10;
         let barrierStep = 5;
-        for(let x=0; x<this.barrierQuantity/2; x++) {
 
+        this.targets['wall'].push(new Target(0,0, 10,1));
+
+        for(let x=0; x<this.barrierQuantity/2; x++) {
             let barrierUp = new Target( BarrierDistance+(barrierStep*x), 0,  1.5, 0);
             barrierUp.generateSize();
             barrierUp.rotation = 180;
@@ -36,20 +55,14 @@ export default class Control {
             barrierDown.generateSize();
             this.targets['barriers'].push(barrierDown);
         }
-
-        window.addEventListener('keyup', (event) => {
-            this.subject.setForce(0);
-            this.subject.addForce(this.flapforce);
-        });
-
-        window.addEventListener('click', (event) => {
+        setTimeout( () => {
             if (this.isSimulationRunning) {
                 this.isSimulationRunning = false;
             } else {
                 this.mainLoop();
                 this.isSimulationRunning = true;
             }
-        });
+        },1000);
     }
 
     mainLoop() {
@@ -61,7 +74,7 @@ export default class Control {
             if (!this.isSimulationRunning) {clearInterval(this.interval); return;};
 
             this.canvas.clearCanvas();
-            this.canvas.draw(this.subject);
+            this.canvas.draw(this.player);
             this.targets['barriers'].forEach( (element) => {
                 this.canvas.draw(element);
             });
@@ -72,7 +85,7 @@ export default class Control {
 
     calcPoints() {
         for (let c=0; c<this.targets['barriers'].length; c++) {
-            if (Math.floor(this.subject.position.x) == Math.ceil(this.targets['barriers'][c].position.x)) {
+            if (Math.floor(this.player.position.x) == Math.ceil(this.targets['barriers'][c].position.x)) {
                 this.points += this.targets['barriers'][c].pointsToCollect;
                 this.targets['barriers'][c].pointsToCollect = 0;
             }
@@ -80,21 +93,20 @@ export default class Control {
     }
 
     calcMovements() {
-        this.subject.calcPlayerAnimation();
+        this.player.calcPlayerAnimation();
         this.targets['barriers'].forEach( (barrier) => {
             barrier.calcMovement();
         });
     }
 
     calcCollision() {
-        if (this.hasCollide(this.subject, this.targets['wall'])) {
-            this.subject.position.y = 1;
-        } else if (this.hasCollide(this.subject, this.targets['barriers'])) {
+        if (this.hasCollide(this.player, this.targets['wall']) || this.hasCollide(this.player, this.targets['barriers'])) {
             this.canvas.print('Game Over!', 1);
+            this.canvas.print('Press R to reset', 2);
             this.isSimulationRunning = false;
         } else {
-            if (this.subject.movement.force > this.gravity) {
-                this.subject.addForce( - this.airResistance);
+            if (this.player.movement.force > this.gravity) {
+                this.player.addForce( - this.airResistance);
             }
         }
     }
@@ -118,5 +130,13 @@ export default class Control {
             }
         };
         return false;
+    }
+
+    resetGame() {
+        this.points = 0;
+        this.player = null;
+        this.targets['wall'].pop()
+        this.targets['barriers'].length = 0;
+        this.initialize();
     }
 }

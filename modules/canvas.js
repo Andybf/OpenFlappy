@@ -1,8 +1,8 @@
 export default class Canvas extends HTMLElement {
 
     maxHeight = new Number();
-    widthPoints = 10;
-    heightPoints = 10;
+    widthPoints;
+    heightPoints;
     context;
     canvas;
 
@@ -18,6 +18,8 @@ export default class Canvas extends HTMLElement {
         this.context = this.canvas.getContext('2d');
         this.context.imageSmoothingEnabled = false;
         this.clearCanvas();
+        this.widthPoints = 10;
+        this.heightPoints = 10;
     }
 
     clearCanvas() {
@@ -52,13 +54,14 @@ export default class Canvas extends HTMLElement {
     }
 
     print(message, line) {
+        let padding = 6;
         this.context.beginPath();
         this.context.fillStyle = '#343434';
         this.context.font = '16px Arial';
         this.context.fillText(
             message.toString(),
-            0,
-            line*16 +16
+            padding,
+            line*16 +16+padding
         );
         this.context.closePath();
     }
