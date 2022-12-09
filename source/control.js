@@ -10,7 +10,7 @@ export default class Control {
         'wall' : new Array(),
         'barriers' : new Array()
     }
-
+    audioSystem;
     isSimulationRunning = false;
     oneSecond = 1000;
     tickInterval = 60;
@@ -21,6 +21,9 @@ export default class Control {
 
     constructor(canvas) {
         this.canvas = canvas;
+        this.audioSystem = new Audio();
+        this.audioSystem.loop = false;
+        this.audioSystem.volume = 0.5;
 
         window.addEventListener('keyup', (event) => {
             if(event.key == 'r') {
@@ -83,10 +86,15 @@ export default class Control {
     }
 
     calcPoints() {
-        for (let c=0; c<this.targets['barriers'].length; c++) {
-            if (Math.floor(this.player.position.x) == Math.ceil(this.targets['barriers'][c].position.x)) {
+        for (let c=0; c<this.targets['barriers'].length; c+=2) {
+            if (Math.floor(this.player.position.x) == Math.ceil(this.targets['barriers'][c].position.x) &&
+                this.targets['barriers'][c].pointsToCollect > 0
+            ) {
                 this.points += this.targets['barriers'][c].pointsToCollect;
                 this.targets['barriers'][c].pointsToCollect = 0;
+
+                this.audioSystem.src = '/content/sound/point.mp3';
+                this.audioSystem.play();
             }
         }
     }
@@ -103,6 +111,9 @@ export default class Control {
             this.canvas.print('Game Over!', 1);
             this.canvas.print('Press R to reset', 2);
             this.isSimulationRunning = false;
+
+            this.audioSystem.src = '/content/sound/hit.mp3';
+            this.audioSystem.play();
         } else {
             if (this.player.movement.force > this.gravity) {
                 this.player.addForce( - this.airResistance);

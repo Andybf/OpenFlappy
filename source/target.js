@@ -6,7 +6,7 @@ export default class Target extends Subject {
     barrierSpeed = 0.0500;
     minSize = 2.0;
     maxSize = 2.75;
-    pointsToCollect = 0.5;
+    pointsToCollect = 1;
 
     constructor(posX, posY, sizX, sizY) {
         super(posX, posY, sizX, sizY);
@@ -26,7 +26,7 @@ export default class Target extends Subject {
 
     resetPosition() {
         this.position.x = 10;
-        this.pointsToCollect = 0.5;
+        this.pointsToCollect = 1;
     }
 
     generateSize() {
