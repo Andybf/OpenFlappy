@@ -3,8 +3,8 @@ import Subject from "./subject.js";
 export default class Target extends Subject {
 
     originalPosition;
-    minSize = 2.0;
-    maxSize = 2.75;
+    minSize = 2.20;
+    maxSize = 2.90;
     pointsToCollect = 1;
     barrierSpeed = 0.0500;
 

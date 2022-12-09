@@ -19,7 +19,8 @@ export default class Control {
 
     oneSecond = 1000;
     tickInterval = 60;
-    timePassed;
+    startTime;
+    passedTime;
     gravity = -9.81/this.tickInterval;
 
     constructor(canvas) {
@@ -27,7 +28,6 @@ export default class Control {
         this.audioSystem = new Audio();
         this.audioSystem.loop = false;
         this.audioSystem.volume = 0.5;
-        this.timePassed = Date.now();
 
         window.addEventListener('keyup', (event) => {
             if(event.key == 'r' && this.isGameOver == true) {
@@ -38,7 +38,9 @@ export default class Control {
         window.addEventListener('click', (event) => {
             if (this.isGameOver == false) {
                 this.player.setForce(0);
-                this.player.flapWings()
+                this.player.flapWings();
+                this.audioSystem.src = '/content/sound/flap.mp3';
+                this.audioSystem.play();
             }
         });
 
@@ -46,6 +48,9 @@ export default class Control {
     }
 
     initialize() {
+        this.startTime = Date.now();
+        this.passedTime =0;
+
         this.player = new Player(4,1.001, 1,1);
 
         let BarrierDistance = 10;
@@ -75,7 +80,7 @@ export default class Control {
 
     mainLoop() {
         this.interval = setInterval(() => {
-            this.calcCollision();
+            this.detectCollisions();
             this.calcMovements();
             this.calcGamePoints();
 
@@ -84,15 +89,17 @@ export default class Control {
             this.canvas.clearCanvas();
             this.targets['barriers'].forEach( (element) => {
                 this.canvas.draw(element);
+                element.addForce((0.00001));
             });
             this.canvas.draw(this.player);
-            this.canvas.print('Points: '+this.points, 0);
+            this.canvas.print('Points: '+ this.points, 0);
 
+            //this.passedTime = new Date(Date.now() - this.startTime).getTime()/1000;
         },
         this.oneSecond / this.tickInterval);
     }
 
-    calcCollision() {
+    detectCollisions() {
         if ((this.hasCollide(this.player, this.targets['wall']) || this.hasCollide(this.player, this.targets['barriers'])) &&
             this.isGameOver == false)
         {
