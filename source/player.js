@@ -2,9 +2,11 @@ import Subject from "./subject.js";
 
 export default class Player extends Subject {
 
+    flapForce = 0.0825;
+
     constructor(posX, posY, sizX, sizY) {
         super(posX, posY, sizX, sizY);
-        this.sprites.texture.src = '../media/image/sprites.png';
+        this.sprites.texture.src = '/content/image/sprites.png';
         this.sprites.width = 32;
         this.sprites.height = 32;
     }
@@ -30,6 +32,10 @@ export default class Player extends Subject {
         } else {
             this.sprites.activeIndex = 0;
         }
+    }
+
+    flapWings() {
+        this.addForce(this.flapForce);
     }
 
 }

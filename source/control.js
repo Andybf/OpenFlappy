@@ -1,5 +1,5 @@
-import Target from '/modules/target.js';
-import Player from '/modules/player.js';
+import Target from './target.js';
+import Player from './player.js';
 
 export default class Control {
 
@@ -16,7 +16,6 @@ export default class Control {
     tickInterval = 60;
     points = 0;
     gravity = -9.81/this.tickInterval;
-    flapforce = 0.0825;
     airResistance = 0.0025;
     barrierQuantity = 4;
 
@@ -31,7 +30,7 @@ export default class Control {
 
         window.addEventListener('click', (event) => {
             this.player.setForce(0);
-            this.player.addForce(this.flapforce);
+            this.player.flapWings()
         });
 
         this.initialize();

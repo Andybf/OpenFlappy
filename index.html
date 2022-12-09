@@ -22,10 +22,20 @@
             }
         </style>
     </head>
+
     <body>
         <section>
             <cmp-canvas></cmp-canvas>
         </section>
     </body>
-    <script src="main.js"></script>
+
+    <script>
+        import('./source/canvas.js').then( ( appClassDefinition) => {
+            customElements.define("cmp-canvas", appClassDefinition.default);
+
+            import("./source/control.js").then( (Control) => {
+                new Control.default(document.querySelector('cmp-canvas'));
+            });
+        });
+    </script>
 </html>
