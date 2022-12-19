@@ -1,5 +1,6 @@
 import Target from './target.js';
 import Player from './player.js';
+import JglAudio from './JglAudio.js';
 
 export default class Control {
 
@@ -14,7 +15,7 @@ export default class Control {
     isGameOver = false;
     isSimulationRunning = false;
     points = 0;
-    airResistance = 0.0025;
+    airResistance = 0.0035;
     barrierQuantity = 4;
 
     oneSecond = 1000;
@@ -25,9 +26,16 @@ export default class Control {
 
     constructor(canvas) {
         this.canvas = canvas;
-        this.audioSystem = new Audio();
-        this.audioSystem.loop = false;
-        this.audioSystem.volume = 0.5;
+
+        this.audioSystem = {
+            game : {
+                makePoint : new JglAudio('/content/sound/point.mp3')
+            },
+            player : {
+                flap : new JglAudio('/content/sound/flap.mp3'),
+                hit  : new JglAudio('/content/sound/hit.mp3'),
+            },
+        }
 
         window.addEventListener('keyup', (event) => {
             if(event.key == 'r' && this.isGameOver == true) {
@@ -39,8 +47,7 @@ export default class Control {
             if (this.isGameOver == false) {
                 this.player.setForce(0);
                 this.player.flapWings();
-                this.audioSystem.src = '/content/sound/flap.mp3';
-                this.audioSystem.play();
+                this.audioSystem.player.flap.play();
             }
         });
 
@@ -129,9 +136,7 @@ export default class Control {
             ) {
                 this.points += this.targets['barriers'][c].pointsToCollect;
                 this.targets['barriers'][c].pointsToCollect = 0;
-
-                this.audioSystem.src = '/content/sound/point.mp3';
-                this.audioSystem.play();
+                this.audioSystem.game.makePoint.play();
             }
         }
     }
@@ -139,8 +144,7 @@ export default class Control {
     playerHit() {
         this.targets['barriers'].forEach( barrier => { barrier.setForce(0); });
         this.player.rotationFactor = 300;
-        this.audioSystem.src = '/content/sound/hit.mp3';
-        this.audioSystem.play();
+        this.audioSystem.player.hit.play();
         this.isGameOver = true;
     }
 
