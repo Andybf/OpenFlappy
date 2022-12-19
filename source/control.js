@@ -25,7 +25,12 @@ export default class Control {
     gravity = -9.81/this.tickInterval;
 
     constructor(canvas) {
+        let gameTexture = new Image();
+        gameTexture.src = '/content/image/sprites.png';
+
         this.canvas = canvas;
+        this.canvas.loadTexture(gameTexture);
+        this.canvas.context.fillStyle = '#0000FF'
 
         this.audioSystem = {
             game : {
@@ -58,8 +63,12 @@ export default class Control {
         this.startTime = Date.now();
         this.passedTime =0;
 
-        this.player = new Player(4,1.001, 1,1);
+        this.player = new Player(4,1.001, 1,0.766);
 
+        this.startGameplay();
+    }
+
+    startGameplay() {
         let BarrierDistance = 10;
         let barrierStep = 5;
 
@@ -68,11 +77,11 @@ export default class Control {
         for(let x=0; x<this.barrierQuantity/2; x++) {
             let barrierUp = new Target( BarrierDistance+(barrierStep*x), 0,  1.5, 0);
             barrierUp.generateSize();
-            barrierUp.rotation = 180;
             this.targets['barriers'].push(barrierUp);
 
             let barrierDown = new Target( BarrierDistance+(barrierStep*x), 10,  1.5, 0);
             barrierDown.generateSize();
+            barrierDown.rotation = 180;
             this.targets['barriers'].push(barrierDown);
         }
         setTimeout( () => {
@@ -82,7 +91,7 @@ export default class Control {
                 this.mainLoop();
                 this.isSimulationRunning = true;
             }
-        },1000);
+        },this.oneSecond);
     }
 
     mainLoop() {
@@ -91,7 +100,10 @@ export default class Control {
             this.calcMovements();
             this.calcGamePoints();
 
-            if (!this.isSimulationRunning) {clearInterval(this.interval); return;};
+            if (!this.isSimulationRunning) {
+                clearInterval(this.interval);
+                return;
+            };
 
             this.canvas.clearCanvas();
             this.targets['barriers'].forEach( (element) => {

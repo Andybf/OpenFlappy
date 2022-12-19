@@ -4,12 +4,19 @@ export default class Player extends Subject {
 
     flapForce = 0.0875;
     rotationFactor = 100;
+    // sprites = {
+    //     activeIndex : 0,
+    //     rects : []
+    // }
 
     constructor(posX, posY, sizX, sizY) {
         super(posX, posY, sizX, sizY);
-        this.sprites.texture.src = '/content/image/sprites.png';
-        this.sprites.width = 32;
-        this.sprites.height = 32;
+        this.sprites.rects = [
+            { x : 0, y : 0, h : 92, w : 120 },
+            { x : 120, y : 0, h : 92, w : 120 },
+            { x : 240, y : 0, h : 92, w : 120 },
+            { x : 360, y : 0, h : 92, w : 120 }
+        ]
     }
 
     calcPlayerAnimation() {

@@ -3,12 +3,15 @@ export default class Canvas extends HTMLElement {
     maxHeight = new Number();
     widthPoints;
     heightPoints;
+    loadedTexture;
+    globalBackgroundColor;
     context;
     canvas;
 
     constructor() {
         super();
         this.innerHTML = '<canvas></canvas>';
+        this.globalBackgroundColor = '#78d2fd';
     }
 
     connectedCallback() {
@@ -23,7 +26,7 @@ export default class Canvas extends HTMLElement {
     }
 
     clearCanvas() {
-        this.context.fillStyle = '#EFEFEF';
+        this.context.fillStyle = this.globalBackgroundColor;
         this.context.fillRect(0,0, this.canvas.width, this.canvas.height);
     }
     
@@ -42,9 +45,9 @@ export default class Canvas extends HTMLElement {
         this.context.rotate((subject.rotation) * Math.PI / 180);
         this.context.translate(-canvasTransalation.x, -canvasTransalation.y);
         this.context.drawImage(
-            subject.sprites.texture,
-            subject.sprites.activeIndex*subject.sprites.width, 0,
-            subject.sprites.width, subject.sprites.height,
+            this.loadedTexture,
+            subject.sprites.rects[subject.sprites.activeIndex].x, subject.sprites.rects[subject.sprites.activeIndex].y,
+            subject.sprites.rects[subject.sprites.activeIndex].w, subject.sprites.rects[subject.sprites.activeIndex].h,
             destinationPosition.x, destinationPosition.y,
             destinationSize.x, destinationSize.y
         );
@@ -64,6 +67,10 @@ export default class Canvas extends HTMLElement {
             line*16 +16+padding
         );
         this.context.closePath();
+    }
+
+    loadTexture(newTexture) {
+        this.loadedTexture = newTexture;
     }
 
     pointsToPixels(point) {
