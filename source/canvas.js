@@ -1,8 +1,11 @@
 export default class Canvas extends HTMLElement {
 
     maxHeight = new Number();
+    
+    screenRatio;
     widthPoints;
     heightPoints;
+
     loadedTexture;
     globalBackgroundColor;
     context;
@@ -16,13 +19,24 @@ export default class Canvas extends HTMLElement {
 
     connectedCallback() {
         this.canvas = this.querySelector('canvas');
-        this.canvas.height = 512;
-        this.canvas.width = 512;
+        this.adjustToScreen();
+        
         this.context = this.canvas.getContext('2d');
         this.context.imageSmoothingEnabled = false;
         this.clearCanvas();
         this.widthPoints = 10;
         this.heightPoints = 10;
+    }
+
+    adjustToScreen() {
+        this.screenRatio = window.innerHeight/window.innerWidth;
+        if (this.screenRatio < 1) {
+            this.canvas.height = window.innerHeight;
+            this.canvas.width = window.innerHeight;
+        } else {
+            this.canvas.height = window.innerWidth;
+            this.canvas.width = window.innerWidth;
+        }
     }
 
     clearCanvas() {
