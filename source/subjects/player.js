@@ -26,7 +26,7 @@ export default class Player extends Subject {
     }
 
     calcPosition() {
-        this.position.y += Number(this.movement.force.toFixed(6));
+        this.position.y += Number(this.movement.force.toFixed(3));
     }
 
     calcTexture() {

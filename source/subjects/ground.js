@@ -13,13 +13,13 @@ export default class Ground extends Subject {
     }
 
     calcMovement() {
-        this.position.x -= Number(this.movement.force.toFixed(6));
-        if (this.posRightX < 0) {
+        this.position.x -= Number(this.movement.force.toFixed(3));
+        if (this.posRightX <= 0) {
             this.resetPosition();
         }
     }
 
     resetPosition() {
-        this.position.x = 10;
+        this.position.x = 12;
     }
 }

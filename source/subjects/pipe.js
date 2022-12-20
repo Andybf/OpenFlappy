@@ -17,7 +17,7 @@ export default class Pipe extends Subject {
     }
 
     calcMovement() {
-        this.position.x -= Number(this.movement.force.toFixed(6));
+        this.position.x -= Number(this.movement.force.toFixed(3));
         if (this.posRightX < 0) {
             this.resetPosition();
             this.generateSize();
@@ -30,7 +30,7 @@ export default class Pipe extends Subject {
     }
 
     generateSize() {
-        const newSize = Number((Math.random() * (this.maxSize - this.minSize + 1) + this.minSize).toFixed(6));
+        const newSize = Number((Math.random() * (this.maxSize - this.minSize + 1) + this.minSize).toFixed(3));
         this.size.y = newSize;
         if (this.position.y < 10) {
             this.position.y = newSize;

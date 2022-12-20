@@ -122,7 +122,6 @@ export default class Control {
             });
             this.canvas.draw(this.player);
             this.canvas.print('Points: '+ this.points, 0);
-
             //this.passedTime = new Date(Date.now() - this.startTime).getTime()/1000;
         },
         this.oneSecond / this.tickInterval);
@@ -168,6 +167,7 @@ export default class Control {
 
     playerHit() {
         this.targets['barriers'].forEach( barrier => { barrier.setForce(0); });
+        this.targets['wall'].forEach( ground => { ground.setForce(0); });
         this.player.rotationFactor = 300;
         this.audioSystem.player.hit.play();
         this.isGameOver = true;
@@ -183,7 +183,7 @@ export default class Control {
         this.points = 0;
         this.player = null;
         this.isGameOver = false;
-        this.targets['wall'].pop()
+        this.targets['wall'].length = 0;
         this.targets['barriers'].length = 0;
         this.initialize();
     }
