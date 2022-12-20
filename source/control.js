@@ -1,7 +1,7 @@
-import Ground from '/source/subjects/ground.js';
-import Pipe from '/source/subjects/pipe.js';
-import Player from '/source/subjects/player.js';
-import JglAudio from '/source/JglAudio.js';
+import Ground from '/OpenFlappy/source/subjects/ground.js';
+import Pipe from '/OpenFlappy/source/subjects/pipe.js';
+import Player from '/OpenFlappy/source/subjects/player.js';
+import JglAudio from '/OpenFlappy/source/JglAudio.js';
 
 export default class Control {
 
