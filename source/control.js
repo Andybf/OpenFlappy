@@ -3,6 +3,11 @@ import Pipe from '/OpenFlappy/source/subjects/pipe.js';
 import Player from '/OpenFlappy/source/subjects/player.js';
 import JglAudio from '/OpenFlappy/source/JglAudio.js';
 
+const GAME_TEXTURE_PATH = '/OpenFlappy/content/image/sprites.png';
+const GAME_SOUND_POINT_PATH = '/OpenFlappy/content/sound/point.mp3';
+const GAME_SOUND_FLAP_PATH = '/OpenFlappy/content/sound/flap.mp3';
+const GAME_SOUND_HIT_PATH = '/OpenFlappy/content/sound/hit.mp3';
+
 export default class Control {
 
     canvas;
@@ -27,18 +32,18 @@ export default class Control {
 
     constructor(canvas) {
         let gameTexture = new Image();
-        gameTexture.src = '/content/image/sprites.png';
+        gameTexture.src = GAME_TEXTURE_PATH;
 
         this.canvas = canvas;
         this.canvas.loadTexture(gameTexture);
 
         this.audioSystem = {
             game : {
-                makePoint : new JglAudio('/content/sound/point.mp3')
+                makePoint : new JglAudio(GAME_SOUND_POINT_PATH)
             },
             player : {
-                flap : new JglAudio('/content/sound/flap.mp3'),
-                hit  : new JglAudio('/content/sound/hit.mp3'),
+                flap : new JglAudio(GAME_SOUND_FLAP_PATH),
+                hit  : new JglAudio(GAME_SOUND_HIT_PATH),
             },
         }
 
