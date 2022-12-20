@@ -31,7 +31,6 @@ export default class Canvas extends HTMLElement {
     }
     
     draw(subject) {
-        this.context.beginPath();
         this.context.save();
 
         let destinationPosition = this.InvertY(this.pointsToPixels(subject.position));
@@ -40,7 +39,6 @@ export default class Canvas extends HTMLElement {
             x : destinationPosition.x + (destinationSize.x/2),
             y : destinationPosition.y + (destinationSize.y/2)
         }
-        
         this.context.translate(canvasTransalation.x, canvasTransalation.y);
         this.context.rotate((subject.rotation) * Math.PI / 180);
         this.context.translate(-canvasTransalation.x, -canvasTransalation.y);
@@ -53,7 +51,6 @@ export default class Canvas extends HTMLElement {
         );
 
         this.context.restore();
-        this.context.closePath();
     }
 
     print(message, line) {

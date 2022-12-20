@@ -1,10 +1,5 @@
 export default class Subject {
 
-    directionUp = 'up';
-    directionDown = 'down';
-    directionLeft = 'left';
-    directionRight = 'right';
-
     sprites = {
         activeIndex : 0,
         rects : []

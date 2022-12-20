@@ -53,10 +53,16 @@ export default class Control {
         });
 
         window.addEventListener('click', (event) => {
-            if (this.isGameOver == false) {
+            if (this.isGameOver == false && this.isSimulationRunning) {
                 this.player.setForce(0);
                 this.player.flapWings();
                 this.audioSystem.player.flap.play();
+            }
+            else if (this.isGameOver == false && this.isSimulationRunning == false) {
+                this.startGameplay();
+            }
+            else if (this.isGameOver && this.isSimulationRunning == false) {
+                this.resetGame();
             }
         });
 
@@ -67,18 +73,27 @@ export default class Control {
         this.startTime = Date.now();
         this.passedTime =0;
 
-        this.player = new Player(4, 4.001, 1, 0.766);
-
-        this.startGameplay();
-    }
-
-    startGameplay() {
-        let pipeDistance = 10;
-        let piperStep = 5;
-
+        this.player = new Player(4, 6, 1, 0.766);
         for(let c=0; c<this.canvas.widthPoints+3; c+=3) {
             this.targets['wall'].push(new Ground(c,1, 3,1));
         }
+
+        setTimeout( () => {
+            this.canvas.clearCanvas();
+            this.targets['wall'].forEach( ground => {
+                this.canvas.draw(ground);
+            });
+            this.canvas.draw(this.player);
+            this.canvas.print('Points: '+ this.points, 0);
+            this.canvas.print('Click to start!', 1);
+        },100);
+    }
+
+    startGameplay() {
+        this.isSimulationRunning = true;
+
+        let pipeDistance = 10;
+        let piperStep = 5;
 
         for(let x=0; x<this.barrierQuantity/2; x++) {
             let pipeUp = new Pipe( pipeDistance+(piperStep*x), 0,  1.5, 0);
@@ -90,14 +105,7 @@ export default class Control {
             pipeDown.rotation = 180;
             this.targets['barriers'].push(pipeDown);
         }
-        setTimeout( () => {
-            if (this.isSimulationRunning) {
-                this.isSimulationRunning = false;
-            } else {
-                this.mainLoop();
-                this.isSimulationRunning = true;
-            }
-        },this.oneSecond);
+        this.mainLoop();
     }
 
     mainLoop() {
@@ -176,7 +184,7 @@ export default class Control {
     gameOver() {
         this.isSimulationRunning = false;
         this.canvas.print('Game Over!', 1);
-        this.canvas.print('Press R to reset', 2);
+        this.canvas.print('Click to reset', 2);
     }
 
     resetGame() {
