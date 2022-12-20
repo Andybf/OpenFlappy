@@ -1,6 +1,6 @@
 import Subject from "./subject.js";
 
-export default class Target extends Subject {
+export default class Pipe extends Subject {
 
     originalPosition;
     minSize = 2.20;

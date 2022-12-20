@@ -1,6 +1,7 @@
-import Target from './target.js';
-import Player from './player.js';
-import JglAudio from './JglAudio.js';
+import Ground from '/source/subjects/ground.js';
+import Pipe from '/source/subjects/pipe.js';
+import Player from '/source/subjects/player.js';
+import JglAudio from '/source/JglAudio.js';
 
 export default class Control {
 
@@ -30,7 +31,6 @@ export default class Control {
 
         this.canvas = canvas;
         this.canvas.loadTexture(gameTexture);
-        this.canvas.context.fillStyle = '#0000FF'
 
         this.audioSystem = {
             game : {
@@ -45,6 +45,10 @@ export default class Control {
         window.addEventListener('keyup', (event) => {
             if(event.key == 'r' && this.isGameOver == true) {
                 this.resetGame();
+            }
+            if (event.key == 'p') {
+                this.playerHit();
+                this.gameOver();
             }
         });
 
@@ -63,26 +67,28 @@ export default class Control {
         this.startTime = Date.now();
         this.passedTime =0;
 
-        this.player = new Player(4,1.001, 1,0.766);
+        this.player = new Player(4, 4.001, 1, 0.766);
 
         this.startGameplay();
     }
 
     startGameplay() {
-        let BarrierDistance = 10;
-        let barrierStep = 5;
+        let pipeDistance = 10;
+        let piperStep = 5;
 
-        this.targets['wall'].push(new Target(0,0, 10,1));
+        for(let c=0; c<this.canvas.widthPoints+3; c+=3) {
+            this.targets['wall'].push(new Ground(c,1, 3,1));
+        }
 
         for(let x=0; x<this.barrierQuantity/2; x++) {
-            let barrierUp = new Target( BarrierDistance+(barrierStep*x), 0,  1.5, 0);
-            barrierUp.generateSize();
-            this.targets['barriers'].push(barrierUp);
+            let pipeUp = new Pipe( pipeDistance+(piperStep*x), 0,  1.5, 0);
+            pipeUp.generateSize();
+            this.targets['barriers'].push(pipeUp);
 
-            let barrierDown = new Target( BarrierDistance+(barrierStep*x), 10,  1.5, 0);
-            barrierDown.generateSize();
-            barrierDown.rotation = 180;
-            this.targets['barriers'].push(barrierDown);
+            let pipeDown = new Pipe( pipeDistance+(piperStep*x), 10,  1.5, 0);
+            pipeDown.generateSize();
+            pipeDown.rotation = 180;
+            this.targets['barriers'].push(pipeDown);
         }
         setTimeout( () => {
             if (this.isSimulationRunning) {
@@ -110,6 +116,10 @@ export default class Control {
                 this.canvas.draw(element);
                 element.addForce((0.00001));
             });
+            this.targets['wall'].forEach( ground => {
+                this.canvas.draw(ground);
+                ground.addForce((0.00001));
+            });
             this.canvas.draw(this.player);
             this.canvas.print('Points: '+ this.points, 0);
 
@@ -136,6 +146,9 @@ export default class Control {
 
     calcMovements() {
         this.player.calcPlayerAnimation();
+        this.targets['wall'].forEach( ground => {
+            ground.calcMovement();
+        });
         this.targets['barriers'].forEach( (barrier) => {
             barrier.calcMovement();
         });

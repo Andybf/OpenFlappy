@@ -11,7 +11,7 @@ export default class Canvas extends HTMLElement {
     constructor() {
         super();
         this.innerHTML = '<canvas></canvas>';
-        this.globalBackgroundColor = '#78d2fd';
+        this.globalBackgroundColor = '#a8defa';
     }
 
     connectedCallback() {

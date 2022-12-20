@@ -4,10 +4,6 @@ export default class Player extends Subject {
 
     flapForce = 0.0875;
     rotationFactor = 100;
-    // sprites = {
-    //     activeIndex : 0,
-    //     rects : []
-    // }
 
     constructor(posX, posY, sizX, sizY) {
         super(posX, posY, sizX, sizY);
