@@ -11,7 +11,7 @@ export default class Pipe extends Subject {
     constructor(posX, posY, sizX, sizY) {
         super(posX, posY, sizX, sizY);
         this.sprites.rects = [
-            { x : 0, y : 92, h : 196, w : 120 }
+            { x : 0, y : 92, h : 196, w : 96 }
         ]
         this.setForce(this.barrierSpeed);
     }

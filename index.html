@@ -34,6 +34,8 @@
     </body>
 
     <script>
+        const IS_DEBUG = false;
+
         import('./source/canvas.js').then( ( appClassDefinition) => {
             customElements.define("cmp-canvas", appClassDefinition.default);
 

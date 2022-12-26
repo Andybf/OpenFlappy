@@ -31,11 +31,7 @@ export default class Control {
     gravity = -9.81/this.tickInterval;
 
     constructor(canvas) {
-        let gameTexture = new Image();
-        gameTexture.src = GAME_TEXTURE_PATH;
-
         this.canvas = canvas;
-        this.canvas.loadTexture(gameTexture);
 
         this.audioSystem = {
             game : {
@@ -71,7 +67,12 @@ export default class Control {
             }
         });
 
-        this.initialize();
+        let gameTexture = new Image();
+        gameTexture.src = GAME_TEXTURE_PATH;
+        this.canvas.loadTexture(gameTexture);
+        gameTexture.onload = () => {
+            this.initialize();
+        };
     }
 
     initialize() {
@@ -83,15 +84,13 @@ export default class Control {
             this.targets['wall'].push(new Ground(c,1, 3,1));
         }
 
-        setTimeout( () => {
-            this.canvas.clearCanvas();
-            this.targets['wall'].forEach( ground => {
-                this.canvas.draw(ground);
-            });
-            this.canvas.draw(this.player);
-            this.canvas.print('Points: '+ this.points, 0);
-            this.canvas.print('Click to start!', 1);
-        },100);
+        this.canvas.clearCanvas();
+        this.targets['wall'].forEach( ground => {
+            this.canvas.draw(ground);
+        });
+        this.canvas.draw(this.player);
+        this.canvas.print('Points: '+ this.points, 0);
+        this.canvas.print('Click to start!', 1);
     }
 
     startGameplay() {
