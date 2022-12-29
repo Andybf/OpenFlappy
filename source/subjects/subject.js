@@ -53,6 +53,7 @@ export default class Subject {
 
     color = "#343434";
     rotation = 0.0;
+    alpha = 1;
 
     constructor(posX, posY, sizX, sizY) {
         this.position.x = posX;

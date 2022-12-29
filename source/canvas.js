@@ -34,6 +34,8 @@ export default class Canvas extends HTMLElement {
     context;
     canvas;
 
+    printFontSize = 20;
+
     constructor() {
         super();
         this.innerHTML = '<canvas></canvas>';
@@ -69,7 +71,7 @@ export default class Canvas extends HTMLElement {
 
     draw(subject) {
         this.context.save();
-
+        this.context.globalAlpha = subject.alpha;
         let destinationPosition = this.InvertY(this.pointsToPixels(subject.position));
         let destinationSize = this.pointsToPixels(subject.size);
 
@@ -107,14 +109,15 @@ export default class Canvas extends HTMLElement {
     }
 
     print(message, line) {
-        let padding = 10;
+        let paddingY = 40;
         this.context.beginPath();
         this.context.fillStyle = '#343434';
-        this.context.font = '16px Arial';
+        this.context.font = `${this.printFontSize}px Arial`;
+        this.context.textAlign = 'center';
         this.context.fillText(
             message.toString(),
-            padding,
-            line*16 +16+padding
+            window.innerWidth/2,
+            line*this.printFontSize + this.printFontSize+paddingY
         );
         this.context.closePath();
     }

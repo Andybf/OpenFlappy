@@ -1,3 +1,4 @@
+import Cloud from '/OpenFlappy/source/subjects/cloud.js';
 import Ground from '/OpenFlappy/source/subjects/ground.js';
 import Pipe from '/OpenFlappy/source/subjects/pipe.js';
 import Player from '/OpenFlappy/source/subjects/player.js';
@@ -12,6 +13,7 @@ export default class Control {
 
     canvas;
     player;
+    clouds = new Array();
 
     targets = {
         'wall' : new Array(),
@@ -73,13 +75,22 @@ export default class Control {
         };
     }
 
+    RandBeteewn(minSize, maxSize, decimals) {
+        return Number((Math.random() * (maxSize - minSize) + minSize).toFixed(decimals));
+    }
+
     initialize() {
+        this.pushNewClouds(3);
+        this.clouds[0].position.x = this.RandBeteewn(1,8,1)
         this.player = new Player(4, 6, 1, 0.766);
         for(let c=0; c<this.canvas.widthPoints+3; c+=3) {
             this.targets['wall'].push(new Ground(c,1, 3,1));
         }
 
         this.canvas.clearCanvas();
+        this.clouds.forEach( cloud => {
+            this.canvas.draw(cloud);
+        });
         this.targets['wall'].forEach( ground => {
             this.canvas.draw(ground);
         });
@@ -119,6 +130,9 @@ export default class Control {
             };
 
             this.canvas.clearCanvas();
+            this.clouds.forEach( cloud => {
+                this.canvas.draw(cloud);
+            });
             this.targets['barriers'].forEach( (element) => {
                 this.canvas.draw(element);
                 element.addForce((0.00001));
@@ -151,6 +165,13 @@ export default class Control {
 
     calcMovements() {
         this.player.calcPlayerAnimation();
+        this.clouds.forEach( (cloud,index) => {
+            cloud.calcMovement();
+            if (cloud.shouldBeDeletedFromMemory) {
+                this.clouds.splice(index,1);
+                this.pushNewClouds(1);
+            }
+        });
         this.targets['wall'].forEach( ground => {
             ground.calcMovement();
         });
@@ -174,6 +195,7 @@ export default class Control {
     playerHit() {
         this.targets['barriers'].forEach( barrier => { barrier.setForce(0); });
         this.targets['wall'].forEach( ground => { ground.setForce(0); });
+        this.clouds.forEach( cloud => { cloud.setForce(0); });
         this.player.rotationFactor = 300;
         this.audioSystem.player.hit.play();
         this.isGameOver = true;
@@ -192,5 +214,22 @@ export default class Control {
         this.targets['wall'].length = 0;
         this.targets['barriers'].length = 0;
         this.initialize();
+    }
+
+    pushNewClouds(quantity) {
+        for(let x=0; x<quantity; x++) {
+            let rect = {
+                x: this.RandBeteewn(11,18,1),
+                y: this.RandBeteewn(5,10,1),
+                w: 0,
+                h: 0
+            }
+            let overallSize = rect.y/2;
+            rect.w = this.RandBeteewn(overallSize, overallSize, 1);
+            rect.h = this.RandBeteewn(overallSize/1.5, overallSize/3, 1)
+            let newCloud = new Cloud(rect.x, rect.y, rect.w, rect.h);
+            newCloud.setForce(this.RandBeteewn(0.0500, 0.0650, 4));
+            this.clouds.push(newCloud);
+        }
     }
 }
