@@ -11,7 +11,7 @@ export default class Pipe extends Subject {
     constructor(posX, posY, sizX, sizY) {
         super(posX, posY, sizX, sizY);
         this.sprites.rects = [
-            { x : 0, y : 92, h : 196, w : 96 }
+            { x : 0, y : 92, h : 192, w : 96 }
         ]
         this.setForce(this.barrierSpeed);
     }
@@ -20,7 +20,7 @@ export default class Pipe extends Subject {
         this.position.x -= Number(this.movement.force.toFixed(3));
         if (this.posRightX < 0) {
             this.resetPosition();
-            this.generateSize();
+            this.generateHeightPosition();
         }
     }
 
@@ -29,7 +29,7 @@ export default class Pipe extends Subject {
         this.pointsToCollect = 1;
     }
 
-    generateSize() {
+    generateHeightPosition() {
         const newSize = Number((Math.random() * (this.maxSize - this.minSize + 1) + this.minSize).toFixed(3));
         this.size.y = newSize;
         if (this.position.y < 10) {

@@ -86,6 +86,8 @@ export default class Control {
 
         this.canvas.clearCanvas();
         this.targets['wall'].forEach( ground => {
+            ground.hitbox.y = -0.25;
+            ground.hitbox.h = -0.25
             this.canvas.draw(ground);
         });
         this.canvas.draw(this.player);
@@ -100,12 +102,12 @@ export default class Control {
         let piperStep = 5;
 
         for(let x=0; x<this.barrierQuantity/2; x++) {
-            let pipeUp = new Pipe( pipeDistance+(piperStep*x), 0,  1.5, 0);
-            pipeUp.generateSize();
+            let pipeUp = new Pipe( pipeDistance+(piperStep*x), 0,  1.33, 0);
+            pipeUp.generateHeightPosition();
             this.targets['barriers'].push(pipeUp);
 
-            let pipeDown = new Pipe( pipeDistance+(piperStep*x), 10,  1.5, 0);
-            pipeDown.generateSize();
+            let pipeDown = new Pipe( pipeDistance+(piperStep*x), 10,  1.33, 0);
+            pipeDown.generateHeightPosition();
             pipeDown.rotation = 180;
             this.targets['barriers'].push(pipeDown);
         }
@@ -140,12 +142,12 @@ export default class Control {
     }
 
     detectCollisions() {
-        if ((this.hasCollide(this.player, this.targets['wall']) || this.hasCollide(this.player, this.targets['barriers'])) &&
+        if ((this.player.hasCollideWith(this.targets['wall']) || this.player.hasCollideWith(this.targets['barriers'])) &&
             this.isGameOver == false)
         {
             this.playerHit();
         }
-        else if (this.hasCollide(this.player, this.targets['wall']) && this.isGameOver) {
+        else if (this.player.hasCollideWith(this.targets['wall']) && this.isGameOver) {
             this.gameOver();
         }
         else {
@@ -198,26 +200,5 @@ export default class Control {
         this.targets['wall'].length = 0;
         this.targets['barriers'].length = 0;
         this.initialize();
-    }
-
-    hasCollide(subject, targets) {
-        for (let c=0; c<targets.length; c++) {
-            if (
-                (subject.posX >= targets[c].posX && subject.posX <= targets[c].PosRightX &&
-                 subject.posY <= targets[c].posY && subject.posY >= targets[c].posDownY)
-                 ||
-                (subject.posRightX >= targets[c].posX && subject.posRightX <= targets[c].posRightX &&
-                 subject.posY <= targets[c].posY && subject.posY >= targets[c].posDownY)
-                 ||
-                (subject.posRightX >= targets[c].posX && subject.posRightX <= targets[c].posRightX &&
-                 subject.posDownY <= targets[c].posY && subject.posDownY >= targets[c].posDownY)
-                 ||
-                (subject.posX >= targets[c].posX && subject.posX <= targets[c].posRightX &&
-                 subject.posDownY <= targets[c].posY && subject.posDownY >= targets[c].posDownY)
-            ) {
-                return true;
-            }
-        };
-        return false;
     }
 }

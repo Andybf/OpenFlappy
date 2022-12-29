@@ -12,7 +12,7 @@ export default class Player extends Subject {
             { x : 120, y : 0, h : 92, w : 120 },
             { x : 240, y : 0, h : 92, w : 120 },
             { x : 360, y : 0, h : 92, w : 120 }
-        ]
+        ];
     }
 
     calcPlayerAnimation() {

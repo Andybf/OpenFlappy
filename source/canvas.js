@@ -18,6 +18,7 @@
  * visit:
  * https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/drawImage
  * for more information.
+ * 
  */
 
 export default class Canvas extends HTMLElement {
@@ -71,6 +72,9 @@ export default class Canvas extends HTMLElement {
 
         let destinationPosition = this.InvertY(this.pointsToPixels(subject.position));
         let destinationSize = this.pointsToPixels(subject.size);
+        let hitboxPosition = this.InvertY(this.pointsToPixels({x: subject.hitboxPosX, y: subject.hitboxPosY}));
+        let hitboxSize = this.pointsToPixels({x: subject.hitboxPosRightX-subject.posX, y: subject.posY-subject.hitboxPosDownY});
+
         let canvasTransalation = {
             x : destinationPosition.x + (destinationSize.x/2),
             y : destinationPosition.y + (destinationSize.y/2)
@@ -78,10 +82,6 @@ export default class Canvas extends HTMLElement {
         this.context.translate(canvasTransalation.x, canvasTransalation.y);
         this.context.rotate((subject.rotation) * Math.PI / 180);
         this.context.translate(-canvasTransalation.x, -canvasTransalation.y);
-        if(IS_DEBUG) {
-            this.context.rect(destinationPosition.x, destinationPosition.y, destinationSize.x, destinationSize.y);
-        }
-        this.context.stroke();
         this.context.drawImage(
             this.loadedTexture,
             subject.sprites.rects[subject.sprites.activeIndex].x, subject.sprites.rects[subject.sprites.activeIndex].y,
@@ -89,6 +89,19 @@ export default class Canvas extends HTMLElement {
             destinationPosition.x, destinationPosition.y,
             destinationSize.x, destinationSize.y
         );
+        if(IS_DEBUG) {
+            this.context.beginPath();
+            this.context.strokeStyle = '#0000FF';
+            this.context.rect(hitboxPosition.x, hitboxPosition.y, hitboxSize.x, hitboxSize.y);
+            this.context.stroke();
+            this.context.closePath();
+
+            this.context.beginPath();
+            this.context.strokeStyle = '#343434';
+            this.context.rect(destinationPosition.x, destinationPosition.y, destinationSize.x, destinationSize.y);
+            this.context.stroke();
+            this.context.closePath();
+        }
         this.context.restore();
     }
 

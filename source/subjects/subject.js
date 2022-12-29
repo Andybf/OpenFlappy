@@ -1,3 +1,28 @@
+/*
+ * Subject.js
+ * Created by: Anderson Bucchianico
+ * 
+ * Additional Help:
+ * 
+ * How hitbox works:
+ * By default, the hitbox has the same position and dimensions as the draw rect.
+ * The values of the hitbox rect exist to expand and/or shrink the hitbox,
+ * relative to the draw rect dimensions. Consider the following configuration:
+ * 
+ * hitBox = {
+ *     x : 0, y : 10,
+ *     w : -5, h : 0
+ * }
+ * ┌──-────────────────-┐
+ * │                    │  Legend:
+ * ├- - - - - - - - -┐  │  ─────  =  Object draw rectangle
+ * │                 |  │  - - -  =  Object hitbox
+ * │                 |  │
+ * │                 |  │
+ * └─────────────────┴─-┘
+ * 
+ */
+
 export default class Subject {
 
     sprites = {
@@ -21,6 +46,11 @@ export default class Subject {
         y : 1
     }
 
+    hitbox = {
+        x : 0, y : 0,
+        w : 0, h : 0
+    }
+
     color = "#343434";
     rotation = 0.0;
 
@@ -39,6 +69,27 @@ export default class Subject {
         this.movement.force = Number((this.movement.force+forcePoints).toFixed(3));
     }
 
+    hasCollideWith(targets) {
+        for (let c=0; c<targets.length; c++) {
+            if (
+                (this.hitboxPosX >= targets[c].hitboxPosX && this.hitboxPosX <= targets[c].hitboxPosRightX &&
+                 this.hitboxPosY <= targets[c].hitboxPosY && this.hitboxPosY >= targets[c].hitboxPosDownY)
+                 ||
+                (this.hitboxPosRightX >= targets[c].hitboxPosX && this.hitboxPosRightX <= targets[c].hitboxPosRightX &&
+                 this.hitboxPosY <= targets[c].hitboxPosY && this.hitboxPosY >= targets[c].hitboxPosDownY)
+                 ||
+                (this.hitboxPosRightX >= targets[c].hitboxPosX && this.hitboxPosRightX <= targets[c].hitboxPosRightX &&
+                 this.hitboxPosDownY <= targets[c].hitboxPosY && this.hitboxPosDownY >= targets[c].hitboxPosDownY)
+                 ||
+                (this.hitboxPosX >= targets[c].hitboxPosX && this.hitboxPosX <= targets[c].hitboxPosRightX &&
+                 this.hitboxPosDownY <= targets[c].hitboxPosY && this.hitboxPosDownY >= targets[c].hitboxPosDownY)
+            ) {
+                return true;
+            }
+        };
+        return false;
+    }
+
     get posDownY() {
         return Number(this.position.y.toFixed(3))-this.size.y;
     }
@@ -53,5 +104,19 @@ export default class Subject {
 
     get posX() {
         return Number(this.position.x.toFixed(3));
+    }
+
+
+    get hitboxPosRightX() {
+        return (Number(this.position.x.toFixed(3))+this.size.x) + this.hitbox.w;
+    }
+    get hitboxPosDownY() {
+        return (Number(this.position.y.toFixed(3))-this.size.y) + this.hitbox.h;
+    }
+    get hitboxPosX() {
+        return Number(this.position.x.toFixed(3)) + this.hitbox.x;
+    }
+    get hitboxPosY() {
+        return Number(this.position.y.toFixed(3)) + this.hitbox.y;
     }
 }
