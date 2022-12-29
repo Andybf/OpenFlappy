@@ -36,6 +36,10 @@
     <script>
         const IS_DEBUG = false;
 
+        function randBeteewen(minSize, maxSize, decimals) {
+            return Number((Math.random() * (maxSize - minSize) + minSize).toFixed(decimals));
+        }   
+
         import('./source/canvas.js').then( ( appClassDefinition) => {
             customElements.define("cmp-canvas", appClassDefinition.default);
 

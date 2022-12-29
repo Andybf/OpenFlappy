@@ -2,16 +2,13 @@ import Subject from "./subject.js";
 
 export default class Ground extends Subject {
 
-    barrierSpeed = 0.0500;
-
     constructor(posX, posY, sizX, sizY) {
         super(posX, posY, sizX, sizY);
         this.sprites.rects = [
             { x : 120, y : 212, h : 44, w : 120 }
         ];
         this.hitbox.y = -0.25;
-        this.hitbox.h = -0.25
-        this.setForce(this.barrierSpeed);
+        this.hitbox.h = -0.25;
     }
 
     calcMovement() {

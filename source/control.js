@@ -26,6 +26,8 @@ export default class Control {
     airResistance = 0.0035;
     barrierQuantity = 4;
 
+    gameSpeed = 0.0500;
+
     oneSecond = 1000;
     tickInterval = 60;
     gravity = -9.81/this.tickInterval;
@@ -75,16 +77,16 @@ export default class Control {
         };
     }
 
-    RandBeteewn(minSize, maxSize, decimals) {
-        return Number((Math.random() * (maxSize - minSize) + minSize).toFixed(decimals));
-    }
-
     initialize() {
         this.pushNewClouds(3);
-        this.clouds[0].position.x = this.RandBeteewn(1,8,1)
+        this.clouds[0].position.x = randBeteewen(1,8,1);
+
         this.player = new Player(4, 6, 1, 0.766);
+        
         for(let c=0; c<this.canvas.widthPoints+3; c+=3) {
-            this.targets['wall'].push(new Ground(c,1, 3,1));
+            let newGround = new Ground(c,1, 3,1);
+            newGround.setForce(this.gameSpeed);
+            this.targets['wall'].push(newGround);
         }
 
         this.canvas.clearCanvas();
@@ -108,10 +110,12 @@ export default class Control {
         for(let x=0; x<this.barrierQuantity/2; x++) {
             let pipeUp = new Pipe(pipeDistance+(pipeStep*x), 0, 1.33, 0);
             pipeUp.generateHeightPosition();
+            pipeUp.setForce(this.gameSpeed);
             this.targets['barriers'].push(pipeUp);
 
             let pipeDown = new Pipe(pipeDistance+(pipeStep*x), 10, 1.33, 0);
             pipeDown.generateHeightPosition();
+            pipeDown.setForce(this.gameSpeed);
             pipeDown.rotation = 180;
             this.targets['barriers'].push(pipeDown);
         }
@@ -133,13 +137,11 @@ export default class Control {
             this.clouds.forEach( cloud => {
                 this.canvas.draw(cloud);
             });
-            this.targets['barriers'].forEach( (element) => {
-                this.canvas.draw(element);
-                element.addForce((0.00001));
+            this.targets['barriers'].forEach( (pipe) => {
+                this.canvas.draw(pipe);
             });
             this.targets['wall'].forEach( ground => {
                 this.canvas.draw(ground);
-                ground.addForce((0.00001));
             });
             this.canvas.draw(this.player);
             this.canvas.print('Points: '+ this.points, 0);
@@ -196,7 +198,7 @@ export default class Control {
         this.targets['barriers'].forEach( barrier => { barrier.setForce(0); });
         this.targets['wall'].forEach( ground => { ground.setForce(0); });
         this.clouds.forEach( cloud => { cloud.setForce(0); });
-        this.player.rotationFactor = 300;
+        this.player.rotationFactor *= 3;
         this.audioSystem.player.hit.play();
         this.isGameOver = true;
     }
@@ -220,16 +222,16 @@ export default class Control {
     pushNewClouds(quantity) {
         for(let x=0; x<quantity; x++) {
             let rect = {
-                x: this.RandBeteewn(11,18,1),
-                y: this.RandBeteewn(5,10,1),
+                x: randBeteewen(11,18,1),
+                y: randBeteewen(5,10,1),
                 w: 0,
                 h: 0
             }
             let overallSize = rect.y/2;
-            rect.w = this.RandBeteewn(overallSize, overallSize, 1);
-            rect.h = this.RandBeteewn(overallSize/1.5, overallSize/3, 1)
+            rect.w = randBeteewen(overallSize, overallSize, 1);
+            rect.h = randBeteewen(overallSize/1.5, overallSize/3, 1)
             let newCloud = new Cloud(rect.x, rect.y, rect.w, rect.h);
-            newCloud.setForce(this.RandBeteewn(0.0500, 0.0650, 4));
+            newCloud.setForce(randBeteewen(this.gameSpeed, this.gameSpeed+0.0150, 4));
             this.clouds.push(newCloud);
         }
     }

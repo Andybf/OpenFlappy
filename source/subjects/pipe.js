@@ -6,14 +6,12 @@ export default class Pipe extends Subject {
     minSize = 2.20;
     maxSize = 2.90;
     pointsToCollect = 1;
-    barrierSpeed = 0.0500;
 
     constructor(posX, posY, sizX, sizY) {
         super(posX, posY, sizX, sizY);
         this.sprites.rects = [
             { x : 0, y : 92, h : 192, w : 96 }
         ]
-        this.setForce(this.barrierSpeed);
     }
 
     calcMovement() {
