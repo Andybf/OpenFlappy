@@ -213,6 +213,7 @@ export default class Control {
         this.isGameOver = false;
         this.targets['wall'].length = 0;
         this.targets['barriers'].length = 0;
+        this.clouds.length = 0;
         this.initialize();
     }
 
