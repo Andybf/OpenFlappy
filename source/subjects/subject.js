@@ -90,22 +90,18 @@ export default class Subject {
         return false;
     }
 
-    get posDownY() {
-        return Number(this.position.y.toFixed(3))-this.size.y;
-    }
-
-    get posY() {
-        return Number(this.position.y.toFixed(3));
-    }
-
     get posRightX() {
         return Number(this.position.x.toFixed(3))+this.size.x;
     }
-
+    get posDownY() {
+        return Number(this.position.y.toFixed(3))-this.size.y;
+    }
     get posX() {
         return Number(this.position.x.toFixed(3));
     }
-
+    get posY() {
+        return Number(this.position.y.toFixed(3));
+    }
 
     get hitboxPosRightX() {
         return (Number(this.position.x.toFixed(3))+this.size.x) + this.hitbox.w;

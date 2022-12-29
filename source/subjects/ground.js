@@ -9,6 +9,8 @@ export default class Ground extends Subject {
         this.sprites.rects = [
             { x : 120, y : 212, h : 44, w : 120 }
         ];
+        this.hitbox.y = -0.25;
+        this.hitbox.h = -0.25
         this.setForce(this.barrierSpeed);
     }
 

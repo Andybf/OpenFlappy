@@ -72,8 +72,6 @@ export default class Canvas extends HTMLElement {
 
         let destinationPosition = this.InvertY(this.pointsToPixels(subject.position));
         let destinationSize = this.pointsToPixels(subject.size);
-        let hitboxPosition = this.InvertY(this.pointsToPixels({x: subject.hitboxPosX, y: subject.hitboxPosY}));
-        let hitboxSize = this.pointsToPixels({x: subject.hitboxPosRightX-subject.posX, y: subject.posY-subject.hitboxPosDownY});
 
         let canvasTransalation = {
             x : destinationPosition.x + (destinationSize.x/2),
@@ -90,6 +88,9 @@ export default class Canvas extends HTMLElement {
             destinationSize.x, destinationSize.y
         );
         if(IS_DEBUG) {
+            let hitboxPosition = this.InvertY(this.pointsToPixels({x: subject.hitboxPosX, y: subject.hitboxPosY}));
+            let hitboxSize = this.pointsToPixels({x: subject.hitboxPosRightX-subject.posX, y: subject.posY-subject.hitboxPosDownY});
+
             this.context.beginPath();
             this.context.strokeStyle = '#0000FF';
             this.context.rect(hitboxPosition.x, hitboxPosition.y, hitboxSize.x, hitboxSize.y);

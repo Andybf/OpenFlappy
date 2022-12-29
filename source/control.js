@@ -26,8 +26,6 @@ export default class Control {
 
     oneSecond = 1000;
     tickInterval = 60;
-    startTime;
-    passedTime;
     gravity = -9.81/this.tickInterval;
 
     constructor(canvas) {
@@ -76,9 +74,6 @@ export default class Control {
     }
 
     initialize() {
-        this.startTime = Date.now();
-        this.passedTime =0;
-
         this.player = new Player(4, 6, 1, 0.766);
         for(let c=0; c<this.canvas.widthPoints+3; c+=3) {
             this.targets['wall'].push(new Ground(c,1, 3,1));
@@ -86,8 +81,6 @@ export default class Control {
 
         this.canvas.clearCanvas();
         this.targets['wall'].forEach( ground => {
-            ground.hitbox.y = -0.25;
-            ground.hitbox.h = -0.25
             this.canvas.draw(ground);
         });
         this.canvas.draw(this.player);
@@ -99,14 +92,14 @@ export default class Control {
         this.isSimulationRunning = true;
 
         let pipeDistance = 10;
-        let piperStep = 5;
+        let pipeStep = 5;
 
         for(let x=0; x<this.barrierQuantity/2; x++) {
-            let pipeUp = new Pipe( pipeDistance+(piperStep*x), 0,  1.33, 0);
+            let pipeUp = new Pipe(pipeDistance+(pipeStep*x), 0, 1.33, 0);
             pipeUp.generateHeightPosition();
             this.targets['barriers'].push(pipeUp);
 
-            let pipeDown = new Pipe( pipeDistance+(piperStep*x), 10,  1.33, 0);
+            let pipeDown = new Pipe(pipeDistance+(pipeStep*x), 10, 1.33, 0);
             pipeDown.generateHeightPosition();
             pipeDown.rotation = 180;
             this.targets['barriers'].push(pipeDown);
@@ -136,7 +129,6 @@ export default class Control {
             });
             this.canvas.draw(this.player);
             this.canvas.print('Points: '+ this.points, 0);
-            //this.passedTime = new Date(Date.now() - this.startTime).getTime()/1000;
         },
         this.oneSecond / this.tickInterval);
     }
