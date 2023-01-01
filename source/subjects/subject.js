@@ -26,14 +26,13 @@
 export default class Subject {
 
     sprites = {
+        variantIndex : 0,
         activeIndex : 0,
         rects : []
     }
 
     movement = {
-        force : 0.125,
-        momentum : 0,
-        direction : this.directionUp
+        force : 0.125
     }
 
     position = {

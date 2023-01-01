@@ -2,8 +2,8 @@ import Subject from "./subject.js";
 
 export default class Player extends Subject {
 
-    flapForce = 0.0875;
-    rotationFactor = 100;
+    flapForce = 0.100;
+    rotationFactor = 150;
 
     constructor(posX, posY, sizX, sizY) {
         super(posX, posY, sizX, sizY);
