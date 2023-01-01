@@ -3,6 +3,7 @@ import Ground from '/OpenFlappy/source/subjects/ground.js';
 import Pipe from '/OpenFlappy/source/subjects/pipe.js';
 import Player from '/OpenFlappy/source/subjects/player.js';
 import JglAudio from '/OpenFlappy/source/JglAudio.js';
+import ScoreSystem from '/OpenFlappy/source/score.js';
 
 const GAME_TEXTURE_PATH = '/OpenFlappy/content/image/sprites.png';
 const GAME_SOUND_POINT_PATH = '/OpenFlappy/content/sound/point.mp3';
@@ -15,15 +16,14 @@ export default class Control {
     player;
     clouds = new Array();
 
-    minSize = 4.50;
-    maxSize = 9.00;
+    minSize = 4.20;
+    maxSize = 9.10;
 
     grounds = new Array();
     pipes = new Array();
     audioSystem;
     isGameOver = false;
     isSimulationRunning = false;
-    points = 0;
     airResistance = 0.0040;
     barrierQuantity = 4;
 
@@ -45,6 +45,7 @@ export default class Control {
                 hit  : new JglAudio(GAME_SOUND_HIT_PATH),
             },
         }
+        this.scoreSystem = new ScoreSystem();
 
         window.addEventListener('keyup', (event) => {
             if(event.key == 'r' && this.isGameOver == true) {
@@ -101,8 +102,7 @@ export default class Control {
             this.canvas.draw(ground);
         });
         this.canvas.draw(this.player);
-        this.canvas.print('Points: '+ this.points, 0);
-        this.canvas.print('Click to start!', 1);
+        this.canvas.print('Click/tap to start!', 1);
     }
 
     startGameplay() {
@@ -135,7 +135,7 @@ export default class Control {
                 this.canvas.draw(ground);
             });
             this.canvas.draw(this.player);
-            this.canvas.print('Points: '+ this.points, 0);
+            this.canvas.print('Points: '+ this.scoreSystem.score, 0);
         },
         this.oneSecond / this.tickInterval);
     }
@@ -182,10 +182,10 @@ export default class Control {
 
     calcGamePoints() {
         this.pipes.forEach( pipePair => {
-            if (Math.ceil(pipePair.upper.posRightX) < Math.floor(this.player.position.x) &&
+            if (Math.ceil(pipePair.upper.posX) < Math.floor(this.player.position.x) &&
                 pipePair.upper.pointsToCollect > 0
             ) {
-                this.points += pipePair.upper.pointsToCollect;
+                this.scoreSystem.addPoints(pipePair.upper.pointsToCollect);
                 pipePair.upper.pointsToCollect = 0;
                 this.audioSystem.game.makePoint.play();
             }
@@ -206,12 +206,14 @@ export default class Control {
 
     gameOver() {
         this.isSimulationRunning = false;
+        this.scoreSystem.countPlayerRecord();
         this.canvas.print('Game Over!', 1);
-        this.canvas.print('Click to reset', 2);
+        this.canvas.print('Your record: '+this.scoreSystem.playerRecord, 2);
+        this.canvas.print('Click to reset', 3);
     }
 
     resetGame() {
-        this.points = 0;
+        this.scoreSystem.reset();
         this.player = null;
         this.isGameOver = false;
         this.grounds.length = 0;
