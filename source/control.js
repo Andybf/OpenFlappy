@@ -50,9 +50,12 @@ export default class Control {
             if(event.key == 'r' && this.isGameOver == true) {
                 this.resetGame();
             }
-            if (event.key == 'p') {
+            if (event.key == 'q') {
                 this.playerHit();
                 this.gameOver();
+            }
+            if (event.key == 'd') {
+                IS_DEBUG = IS_DEBUG ? false : true;
             }
         });
 

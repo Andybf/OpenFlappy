@@ -13,6 +13,11 @@ export default class Player extends Subject {
             { x : 240, y : 0, h : 92, w : 120 },
             { x : 360, y : 0, h : 92, w : 120 }
         ];
+        this.hitbox = {
+            x : 0.10,  y : -0.10,
+            w : -0.20, h : 0.20
+        };
+        this.generateVariant();
     }
 
     calcPlayerAnimation() {
@@ -41,4 +46,12 @@ export default class Player extends Subject {
         this.addForce(this.flapForce);
     }
 
+    generateVariant() {
+        this.sprites.variantIndex = randBetween(0, 1, 0);
+        if (this.sprites.variantIndex == 0) {
+            this.sprites.variantIndex = 0;
+        } else {
+            this.sprites.variantIndex = 2;
+        }
+    }
 }

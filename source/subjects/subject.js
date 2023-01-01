@@ -90,6 +90,10 @@ export default class Subject {
         return false;
     }
 
+    get activeSpriteIndex() {
+        return this.sprites.activeIndex + this.sprites.variantIndex;
+    }
+
     get posRightX() {
         return Number(this.position.x.toFixed(3))+this.size.x;
     }

@@ -84,8 +84,8 @@ export default class Canvas extends HTMLElement {
         this.context.translate(-canvasTransalation.x, -canvasTransalation.y);
         this.context.drawImage(
             this.loadedTexture,
-            subject.sprites.rects[subject.sprites.activeIndex].x, subject.sprites.rects[subject.sprites.activeIndex].y,
-            subject.sprites.rects[subject.sprites.activeIndex].w, subject.sprites.rects[subject.sprites.activeIndex].h,
+            subject.sprites.rects[subject.activeSpriteIndex].x, subject.sprites.rects[subject.activeSpriteIndex].y,
+            subject.sprites.rects[subject.activeSpriteIndex].w, subject.sprites.rects[subject.activeSpriteIndex].h,
             destinationPosition.x, destinationPosition.y,
             destinationSize.x, destinationSize.y
         );
