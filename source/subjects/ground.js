@@ -2,8 +2,11 @@ import Subject from "./subject.js";
 
 export default class Ground extends Subject {
 
-    constructor(posX, posY, sizX, sizY) {
+    resetPositionX = 0;
+
+    constructor(posX, posY, sizX, sizY, resetX) {
         super(posX, posY, sizX, sizY);
+        this.resetPositionX = resetX;
         this.sprites.rects = [
             { x : 120, y : 212, h : 44, w : 120 }
         ];
@@ -19,6 +22,6 @@ export default class Ground extends Subject {
     }
 
     resetPosition() {
-        this.position.x = 12;
+        this.position.x = this.resetPositionX;
     }
 }

@@ -6,7 +6,9 @@ export default class ScoreSystem {
     constructor() {
         this.score = 0;
         this.playerRecord = 0;
-        this.retrievePlayerRecord();
+        if (window.localStorage) {
+            this.retrievePlayerRecord();
+        }
     }
 
     addPoints(pointsToCollect) {
@@ -16,7 +18,9 @@ export default class ScoreSystem {
     countPlayerRecord() {
         if (this.score > this.playerRecord) {
             this.playerRecord = this.score;
-            this.storePlayerRecord();
+            if (window.localStorage) {
+                this.storePlayerRecord();
+            }
         }
     }
 

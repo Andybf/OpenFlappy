@@ -2,7 +2,7 @@ import Cloud from '/OpenFlappy/source/subjects/cloud.js';
 import Ground from '/OpenFlappy/source/subjects/ground.js';
 import Pipe from '/OpenFlappy/source/subjects/pipe.js';
 import Player from '/OpenFlappy/source/subjects/player.js';
-import JglAudio from '/OpenFlappy/source/JglAudio.js';
+import Sound from '/OpenFlappy/source/sound.js';
 import ScoreSystem from '/OpenFlappy/source/score.js';
 
 const GAME_TEXTURE_PATH = '/OpenFlappy/content/image/sprites.png';
@@ -25,10 +25,10 @@ export default class Control {
     isGameOver = false;
     isSimulationRunning = false;
     airResistance = 0.0040;
-    barrierQuantity = 4;
+
+    pipeGroupPadding = 5.5;
 
     gameSpeed = 0.0500;
-
     oneSecond = 1000;
     tickInterval = 60;
     gravity = -9.81/this.tickInterval;
@@ -38,11 +38,11 @@ export default class Control {
 
         this.audioSystem = {
             game : {
-                makePoint : new JglAudio(GAME_SOUND_POINT_PATH)
+                makePoint : new Sound(GAME_SOUND_POINT_PATH)
             },
             player : {
-                flap : new JglAudio(GAME_SOUND_FLAP_PATH),
-                hit  : new JglAudio(GAME_SOUND_HIT_PATH),
+                flap : new Sound(GAME_SOUND_FLAP_PATH),
+                hit  : new Sound(GAME_SOUND_HIT_PATH),
             },
         }
         this.scoreSystem = new ScoreSystem();
@@ -84,12 +84,17 @@ export default class Control {
 
     initialize() {
         this.pushNewClouds(3);
-        this.clouds[0].position.x = randBetween(1,8,1);
+        this.clouds[0].position.x = randBetween(0,5,1);
 
-        this.player = new Player(4, 6, 1, 0.766);
+        this.player = new Player(
+            this.canvas.widthPoints*0.1,
+            this.canvas.heightPoints*0.5,
+            1,
+            0.766
+        );
         
         for(let c=0; c<this.canvas.widthPoints+3; c+=3) {
-            let newGround = new Ground(c,1, 3,1);
+            let newGround = new Ground(c,1, 3,1, this.canvas.widthPoints);
             newGround.setForce(this.gameSpeed);
             this.grounds.push(newGround);
         }
@@ -107,8 +112,9 @@ export default class Control {
 
     startGameplay() {
         this.isSimulationRunning = true;
-        this.pushNewPipes(10);
-        this.pushNewPipes(15);
+        for(let c=0; c<2; c++) {
+            this.pushNewPipeGroup(10 + this.pipeGroupPadding*c);
+        }
         this.mainLoop();
     }
 
@@ -175,7 +181,7 @@ export default class Control {
             barrier.bottom.calcMovement();
             if(barrier.upper.shouldBeDeletedFromMemory) {
                 this.pipes.splice(index,1);
-                this.pushNewPipes(10);
+                this.pushNewPipeGroup(10);
             }
         });
     }
@@ -209,7 +215,7 @@ export default class Control {
         this.scoreSystem.countPlayerRecord();
         this.canvas.print('Game Over!', 1);
         this.canvas.print('Your record: '+this.scoreSystem.playerRecord, 2);
-        this.canvas.print('Click to reset', 3);
+        this.canvas.print('Click/tap to reset', 3);
     }
 
     resetGame() {
@@ -225,7 +231,7 @@ export default class Control {
     pushNewClouds(quantity) {
         for(let x=0; x<quantity; x++) {
             let rect = {
-                x: randBetween(11,18,1),
+                x: randBetween(this.canvas.widthPoints, this.canvas.widthPoints+5, 1),
                 y: randBetween(5,10,1),
                 w: 0,
                 h: 0
@@ -239,7 +245,7 @@ export default class Control {
         }
     }
 
-    pushNewPipes(initialPosX) {
+    pushNewPipeGroup(initialPosX) {
         const openingPosY = randBetween(this.minSize, this.maxSize, 2);
         const openingSize = 2.75/2;
         const pipeDownPosY = 12;

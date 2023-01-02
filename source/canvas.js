@@ -40,17 +40,16 @@ export default class Canvas extends HTMLElement {
         super();
         this.innerHTML = '<canvas></canvas>';
         this.globalBackgroundColor = '#a8defa';
+        this.canvas = this.querySelector('canvas');
+        this.widthPoints = 10;
+        this.heightPoints = 10;
+        this.adjustToScreen();
     }
 
     connectedCallback() {
-        this.canvas = this.querySelector('canvas');
-        this.adjustToScreen();
-        
         this.context = this.canvas.getContext('2d');
         this.context.imageSmoothingEnabled = false;
         this.clearCanvas();
-        this.widthPoints = 10;
-        this.heightPoints = 10;
     }
 
     adjustToScreen() {
@@ -58,9 +57,13 @@ export default class Canvas extends HTMLElement {
         if (this.screenRatio < 1) {
             this.canvas.height = window.innerHeight;
             this.canvas.width = window.innerHeight;
+            this.widthPoints = 10;
+            this.heightPoints = 10;
         } else {
-            this.canvas.height = window.innerWidth;
+            this.canvas.height = window.innerHeight;
             this.canvas.width = window.innerWidth;
+            this.widthPoints = this.widthPoints/this.screenRatio;
+            this.heightPoints = this.widthPoints*this.screenRatio;
         }
     }
 
@@ -116,7 +119,7 @@ export default class Canvas extends HTMLElement {
         this.context.textAlign = 'center';
         this.context.fillText(
             message.toString(),
-            window.innerWidth/2,
+            this.canvas.width/2,
             line*this.printFontSize + this.printFontSize+paddingY
         );
         this.context.closePath();
