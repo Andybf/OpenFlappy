@@ -4,6 +4,7 @@ import Pipe from '/OpenFlappy/source/subjects/pipe.js';
 import Player from '/OpenFlappy/source/subjects/player.js';
 import Sound from '/OpenFlappy/source/sound.js';
 import ScoreSystem from '/OpenFlappy/source/score.js';
+import Textbox from '/OpenFlappy/source/textbox.js'
 
 const GAME_TEXTURE_PATH = '/OpenFlappy/content/image/sprites.png';
 const GAME_SOUND_POINT_PATH = '/OpenFlappy/content/sound/point.mp3';
@@ -18,6 +19,9 @@ export default class Control {
 
     minSize = 4.20;
     maxSize = 9.10;
+
+    scoreSystem;
+    interface;
 
     grounds = new Array();
     pipes = new Array();
@@ -46,6 +50,7 @@ export default class Control {
             },
         }
         this.scoreSystem = new ScoreSystem();
+        this.interface = new Textbox(this.canvas);
 
         window.addEventListener('keyup', (event) => {
             if(event.key == 'r' && this.isGameOver == true) {
@@ -107,11 +112,13 @@ export default class Control {
             this.canvas.draw(ground);
         });
         this.canvas.draw(this.player);
-        this.canvas.print('Click/tap to start!', 1);
+        this.interface.print('Click/tap to start!');
     }
 
     startGameplay() {
         this.isSimulationRunning = true;
+        this.interface.printHeightPercent = 0.10;
+        this.interface.printFontSize = 30;
         for(let c=0; c<2; c++) {
             this.pushNewPipeGroup(10 + this.pipeGroupPadding*c);
         }
@@ -141,7 +148,11 @@ export default class Control {
                 this.canvas.draw(ground);
             });
             this.canvas.draw(this.player);
-            this.canvas.print('Points: '+ this.scoreSystem.score, 0);
+            if (this.isGameOver == false) {
+                this.interface.shouldDrawBackground = false;
+                this.interface.print(this.scoreSystem.score);
+                this.interface.shouldDrawBackground = true;
+            }
         },
         this.oneSecond / this.tickInterval);
     }
@@ -213,9 +224,10 @@ export default class Control {
     gameOver() {
         this.isSimulationRunning = false;
         this.scoreSystem.countPlayerRecord();
-        this.canvas.print('Game Over!', 1);
-        this.canvas.print('Your record: '+this.scoreSystem.playerRecord, 2);
-        this.canvas.print('Click/tap to reset', 3);
+        this.interface.printHeightPercent = 0.465;
+        this.interface.printFontSize = 22;
+        this.interface.print(
+            `Game Over!\nPoints: ${this.scoreSystem.score} | Best: ${this.scoreSystem.playerRecord}\nClick/tap to reset`);
     }
 
     resetGame() {

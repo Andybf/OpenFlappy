@@ -7,6 +7,7 @@ export default class Player extends Subject {
 
     constructor(posX, posY, sizX, sizY) {
         super(posX, posY, sizX, sizY);
+        this.shadowSize = 10;
         this.sprites.rects = [
             { x : 0, y : 0, h : 92, w : 120 },
             { x : 120, y : 0, h : 92, w : 120 },

@@ -34,7 +34,7 @@ export default class Canvas extends HTMLElement {
     context;
     canvas;
 
-    printFontSize = 20;
+    printFontSize = 22;
 
     constructor() {
         super();
@@ -49,6 +49,7 @@ export default class Canvas extends HTMLElement {
     connectedCallback() {
         this.context = this.canvas.getContext('2d');
         this.context.imageSmoothingEnabled = false;
+        this.context.shadowColor = "black";
         this.clearCanvas();
     }
 
@@ -74,6 +75,7 @@ export default class Canvas extends HTMLElement {
 
     draw(subject) {
         this.context.save();
+        this.context.shadowBlur = subject.shadowSize;
         this.context.globalAlpha = subject.alpha;
         let destinationPosition = this.InvertY(this.pointsToPixels(subject.position));
         let destinationSize = this.pointsToPixels(subject.size);
@@ -109,20 +111,6 @@ export default class Canvas extends HTMLElement {
             this.context.closePath();
         }
         this.context.restore();
-    }
-
-    print(message, line) {
-        let paddingY = 40;
-        this.context.beginPath();
-        this.context.fillStyle = '#343434';
-        this.context.font = `${this.printFontSize}px Arial`;
-        this.context.textAlign = 'center';
-        this.context.fillText(
-            message.toString(),
-            this.canvas.width/2,
-            line*this.printFontSize + this.printFontSize+paddingY
-        );
-        this.context.closePath();
     }
 
     loadTexture(newTexture) {

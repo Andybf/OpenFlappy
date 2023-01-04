@@ -7,6 +7,7 @@ export default class Pipe extends Subject {
 
     constructor(posX, posY, sizX, sizY) {
         super(posX, posY, sizX, sizY);
+        this.shadowSize = 10;
         this.sprites.rects = [
             { x : 0, y : 92, h : 304, w : 96 }
         ];

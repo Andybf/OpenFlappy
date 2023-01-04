@@ -51,6 +51,7 @@ export default class Subject {
     }
 
     color = "#343434";
+    shadowSize = 0;
     rotation = 0.0;
     alpha = 1;
 
