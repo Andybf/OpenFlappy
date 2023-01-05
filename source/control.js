@@ -245,11 +245,15 @@ export default class Control {
 
     gameOver() {
         this.isGameplayRunning = false;
-        this.scoreSystem.countPlayerRecord();
         this.interface.printHeightPercent = 0.465;
         this.interface.printFontSize = 22;
+        let bestScore = `Points: ${this.scoreSystem.score} | Best:`;
+        if (this.scoreSystem.score > this.scoreSystem.playerRecord) {
+            bestScore = `New Record!:`;
+        }
+        this.scoreSystem.countPlayerRecord();
         this.interface.print(
-            `Game Over!\nPoints: ${this.scoreSystem.score} | Best: ${this.scoreSystem.playerRecord}\nClick/tap to reset`);
+            `Game Over!\n ${bestScore} ${this.scoreSystem.playerRecord} \nClick/tap to reset`);
     }
 
     resetGame() {
