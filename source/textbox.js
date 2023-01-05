@@ -14,8 +14,9 @@ export default class Textbox {
     }
 
     shouldDrawBackground = true;
+    isRoundEdgesSupported = true;
 
-    printHeightPercent = 0.25;
+    printHeightPercent = 0.465;
     printWidthPercent = 0.50;
 
     constructor(canvas) {
@@ -24,13 +25,16 @@ export default class Textbox {
         this.printFontSize = 22;
         this.shadowBlur = 20;
         this.canvasRef = canvas;
+        if (navigator.vendor != 'Google Inc.') {
+            this.isRoundEdgesSupported = false;
+        }
     }
 
     print(message) {
         this.canvasRef.context.font = `${this.printFontSize}px Comic Sans MS`;
 
         let lines = message.toString().split('\n').length;
-        if (this.shouldDrawBackground) {
+        if (this.shouldDrawBackground && this.isRoundEdgesSupported) {
             this.applyBackground(message.toString(), lines);
         }
         

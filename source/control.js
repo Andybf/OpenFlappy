@@ -27,11 +27,14 @@ export default class Control {
     pipes = new Array();
     audioSystem;
     isGameOver = false;
-    isSimulationRunning = false;
+    isGameplayRunning = false;
+    isStartRunning = true;
     airResistance = 0.0040;
 
     pipeGroupPadding = 5.5;
 
+    mainInterval;
+    startInterval;
     gameSpeed = 0.0500;
     oneSecond = 1000;
     tickInterval = 60;
@@ -66,15 +69,22 @@ export default class Control {
         });
 
         window.addEventListener('click', (event) => {
-            if (this.isGameOver == false && this.isSimulationRunning) {
+            if (this.isStartRunning) {
+                this.isStartRunning = false;
+                this.startGameplay();
                 this.player.setForce(0);
                 this.player.flapWings();
                 this.audioSystem.player.flap.play();
             }
-            else if (this.isGameOver == false && this.isSimulationRunning == false) {
+            else if (this.isGameOver == false && this.isGameplayRunning) {
+                this.player.setForce(0);
+                this.player.flapWings();
+                this.audioSystem.player.flap.play();
+            }
+            else if (this.isGameOver == false && this.isGameplayRunning == false) {
                 this.startGameplay();
             }
-            else if (this.isGameOver && this.isSimulationRunning == false) {
+            else if (this.isGameOver && this.isGameplayRunning == false) {
                 this.resetGame();
             }
         });
@@ -104,19 +114,33 @@ export default class Control {
             this.grounds.push(newGround);
         }
 
-        this.canvas.clearCanvas();
-        this.clouds.forEach( cloud => {
-            this.canvas.draw(cloud);
-        });
-        this.grounds.forEach( ground => {
-            this.canvas.draw(ground);
-        });
-        this.canvas.draw(this.player);
-        this.interface.print('Click/tap to start!');
+        this.startInterval = setInterval(() => {
+            this.calcMovements();
+            if(this.player.position.y < 6) {
+                this.player.setForce(0);
+                this.player.flapWings();
+            }
+
+            if (!this.isStartRunning) {
+                clearInterval(this.startInterval);
+                return;
+            };
+
+            this.canvas.clearCanvas();
+            this.clouds.forEach( cloud => {
+                this.canvas.draw(cloud);
+            });
+            this.grounds.forEach( ground => {
+                this.canvas.draw(ground);
+            });
+            this.canvas.draw(this.player);
+            this.interface.print('Click/tap to start!');
+        },
+        this.oneSecond / this.tickInterval);
     }
 
     startGameplay() {
-        this.isSimulationRunning = true;
+        this.isGameplayRunning = true;
         this.interface.printHeightPercent = 0.10;
         this.interface.printFontSize = 30;
         for(let c=0; c<2; c++) {
@@ -126,13 +150,13 @@ export default class Control {
     }
 
     mainLoop() {
-        this.interval = setInterval(() => {
+        this.mainInterval = setInterval(() => {
             this.detectCollisions();
             this.calcMovements();
             this.calcGamePoints();
 
-            if (!this.isSimulationRunning) {
-                clearInterval(this.interval);
+            if (!this.isGameplayRunning) {
+                clearInterval(this.mainInterval);
                 return;
             };
 
@@ -168,15 +192,13 @@ export default class Control {
         else if (this.player.hasCollideWith(this.grounds) && this.isGameOver) {
             this.gameOver();
         }
-        else {
-            if (this.player.movement.force > this.gravity) {
-                this.player.addForce( - this.airResistance);
-            }
-        }
     }
 
     calcMovements() {
         this.player.calcPlayerAnimation();
+        if (this.player.movement.force > this.gravity) {
+            this.player.addForce( - this.airResistance);
+        }
         this.clouds.forEach( (cloud,index) => {
             cloud.calcMovement();
             if (cloud.shouldBeDeletedFromMemory) {
@@ -222,7 +244,7 @@ export default class Control {
     }
 
     gameOver() {
-        this.isSimulationRunning = false;
+        this.isGameplayRunning = false;
         this.scoreSystem.countPlayerRecord();
         this.interface.printHeightPercent = 0.465;
         this.interface.printFontSize = 22;
@@ -234,6 +256,7 @@ export default class Control {
         this.scoreSystem.reset();
         this.player = null;
         this.isGameOver = false;
+        this.isStartRunning = true;
         this.grounds.length = 0;
         this.pipes.length = 0;
         this.clouds.length = 0;

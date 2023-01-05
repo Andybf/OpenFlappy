@@ -37,9 +37,9 @@ export default class Player extends Subject {
 
     calcTexture() {
         if (this.movement.force < 0) {
-            this.sprites.activeIndex = 1;
-        } else {
             this.sprites.activeIndex = 0;
+        } else {
+            this.sprites.activeIndex = 1;
         }
     }
 
